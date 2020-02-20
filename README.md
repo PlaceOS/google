@@ -37,11 +37,63 @@ Currently supports following:
 require "google"
 ```
 
-TODO: Write usage instructions here
+### Auth comes in two flavors
+
+#### Google::Auth
+
+```crystal
+Google::Auth.new(issuer: "test@example.com", signing_key: PRIVATE_KEY, scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com")
+```
+
+#### Google::FileAuth
+
+```crystal
+Google::FileAuth.new(file_path = "/absolute_path/client_auth.json", scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com")
+```
+
+### Directory
+
+```crystal
+# auth variable below can be instance of Google::Auth or Google::FileAuth
+directory = Google::Directory.new(auth: auth, domain: "example.com")
+
+# To fetch all users
+directory.users
+
+# Fetch single user
+directory.lookup("test@example.com")
+```
+
+### Calendar
+```crystal
+# auth variable below can be instance of Google::Auth or Google::FileAuth
+calendar = Google::Calendar.new(auth: auth)
+
+# To fetch calendar list
+calendar.calendar_list
+
+# To fetch all calendar events
+calendar.events
+
+# To fetch single calendar event by id
+calendar.event("event_id")
+
+# To create calendar event
+calendar.create(event_start: Time.utc, event_end: Time.utc + 1.hour, attendees: ["test@example.com"], summary: "ACA test event", description: "test description")
+
+# To update single calendar event by id
+calendar.update("event_id", summary: "updated summary")
+
+# To delete single calendar event by id
+calendar.delete("event")
+
+# To move single calendar event by id
+calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id")
+```
 
 ## Development
 
-TODO: Write development instructions here
+To run specs `crystal specs`
 
 ## Contributing
 

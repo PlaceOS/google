@@ -6,6 +6,7 @@ require "../auth/auth"
 require "../auth/file_auth"
 require "./event"
 require "./events"
+require "./g_time"
 
 module Google
   module RFC3339Converter
@@ -117,8 +118,8 @@ module Google
       opts = extended_properties(opts, extended_properties) if extended_properties
 
       body = opts.merge({
-        start:      CalendarEvent::GTime.new(event_start, all_day),
-        "end":      CalendarEvent::GTime.new(event_end, all_day),
+        start:      GTime.new(event_start, all_day),
+        "end":      GTime.new(event_end, all_day),
         visibility: visibility.to_s.downcase,
         attendees:  attendees.map { |email| {email: email} },
       }).to_json
@@ -153,8 +154,8 @@ module Google
       raw_json : String? = nil,
       **opts
     )
-      opts = opts.merge({start: CalendarEvent::GTime.new(event_start, all_day)}) if event_start
-      opts = opts.merge({"end": CalendarEvent::GTime.new(event_end, all_day)}) if event_end
+      opts = opts.merge({start: GTime.new(event_start, all_day)}) if event_start
+      opts = opts.merge({"end": GTime.new(event_end, all_day)}) if event_end
       opts = opts.merge({visibility: visibility.to_s.downcase}) if visibility
       opts = opts.merge({attendees: attendees.map { |email| {email: email} }}) if attendees
       opts = extended_properties(opts, extended_properties) if extended_properties

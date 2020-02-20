@@ -87,7 +87,7 @@ calendar.create(event_start: Time.utc, event_end: Time.utc + 1.hour, attendees: 
 calendar.update("event_id", summary: "updated summary")
 
 # To delete single calendar event by id
-calendar.delete("event")
+calendar.delete("event_id")
 
 # To move single calendar event by id
 calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id")

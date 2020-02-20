@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/red-ant/google.svg?branch=master)](https://travis-ci.com/red-ant/google)
+
 # google
 
 Provides ability to interact with google services.

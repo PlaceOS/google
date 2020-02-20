@@ -4,8 +4,9 @@ module Google
       include JSON::Serializable
 
       def initialize(datetime : Time, all_day = false)
+        tz = datetime.location.name
         # ignore special cases
-        @timeZone = {"Local", ""}.includes?(tz) ? nil : datetime.location.name
+        @timeZone = {"Local", ""}.includes?(tz) ? nil : tz
 
         if all_day
           @date = datetime

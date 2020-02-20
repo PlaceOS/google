@@ -2,7 +2,11 @@ require "../spec_helper"
 
 describe Google::Calendar do
   describe "#calendar_list" do
-    pending "works in case of successful api call" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_calendar_list
+
+      CalendarHelper.calendar.calendar_list.is_a?(HTTP::Client::Response).should eq(true)
     end
   end
 
@@ -25,22 +29,38 @@ describe Google::Calendar do
   end
 
   describe "#create" do
-    pending "works in case of successful api call" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_event_create
+
+      CalendarHelper.calendar.create(event_start: Time.utc(2016, 2, 15, 10, 20, 30), event_end: Time.utc(2016, 2, 15, 11, 20, 30), attendees: ["test@example.com"], summary: "ACA test event", description: "test description").is_a?(Google::Calendar::Event).should eq(true)
     end
   end
 
   describe "#update" do
-    pending "works in case of successful api call" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_event_update
+
+      CalendarHelper.calendar.update("123456789", summary: "updated summary").is_a?(Google::Calendar::Event).should eq(true)
     end
   end
 
   describe "#delete" do
-    pending "works in case of successful api call" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_event_delete
+
+      CalendarHelper.calendar.delete("123456789").should eq(true)
     end
   end
 
   describe "#move" do
-    pending "works in case of successful api call" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_event_move
+
+      CalendarHelper.calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id").is_a?(Google::Calendar::Event).should eq(true)
     end
   end
 end
@@ -51,6 +71,11 @@ module CalendarHelper
   def mock_token
     WebMock.stub(:post, "https://www.googleapis.com/oauth2/v4/token")
       .to_return(body: {access_token: "test_token", expires_in: 3599, token_type: "Bearer"}.to_json)
+  end
+
+  def mock_calendar_list
+    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/users/me/calendarList")
+      .to_return(body: {"kind": "calendar#calendarList"}.to_json)
   end
 
   def mock_events
@@ -72,8 +97,28 @@ module CalendarHelper
   end
 
   def mock_event
-    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123").
-      to_return(body: event_response.to_json)
+    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123")
+      .to_return(body: event_response.to_json)
+  end
+
+  def mock_event_create
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1")
+      .to_return(body: event_response.to_json)
+  end
+
+  def mock_event_update
+    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=None")
+      .to_return(body: event_response.to_json)
+  end
+
+  def mock_event_delete
+    WebMock.stub(:delete, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=none&sendNotifications=false")
+      .to_return(body: {"kind": "calendar#calendarDelete"}.to_json)
+  end
+
+  def mock_event_move
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/original_calendar_id/events/event_id/move?destination=destination_calendar_id&sendUpdates=None")
+      .to_return(body: event_response.to_json)
   end
 
   def event_response

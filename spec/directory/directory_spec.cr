@@ -1,8 +1,15 @@
 require "../spec_helper"
 
 describe Google::Directory do
-  #TODO Add specs
   describe "#users" do
+    it "works in case of successful api call" do
+      DirectoryHelper.mock_token
+      DirectoryHelper.mock_user_query
+
+      expected = Google::Directory::UserQuery.from_json(DirectoryHelper.user_query_response.to_json).to_json
+      received = DirectoryHelper.directory.users.to_json
+      received.should eq(expected)
+    end
   end
 
   describe "#lookup" do
@@ -30,6 +37,15 @@ module DirectoryHelper
   end
 
   def user_query_response
+    {
+      "kind": "admin#directory#users",
+      "users": [user_lookup_response]
+    }
+  end
+
+  def mock_user_query
+    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/users?domain=example.com&maxResults=500&projection=full&viewType=admin_view").
+      to_return(body: user_query_response.to_json)
   end
 
   def mock_lookup

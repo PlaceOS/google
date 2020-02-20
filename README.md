@@ -1,6 +1,23 @@
 # google
 
-TODO: Write a description here
+Provides ability to interact with google services.
+
+Currently supports following:
+
+* OAuth Token Generation
+  - By providing credentials via argument
+  - By providing absolute path to `client_auth.json` file
+* Directory API
+  - List
+  - Single user fetch
+* Calendar
+  - CalendarList
+  - Listing calendar events
+  - Single calendar event fetch
+  - Create calendar event
+  - Delete calendar event
+  - Update calendar event
+  - Move calendar event
 
 ## Installation
 

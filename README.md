@@ -95,7 +95,7 @@ calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destina
 
 ## Development
 
-To run specs `crystal specs`
+To run specs `crystal spec`
 
 ## Contributing
 

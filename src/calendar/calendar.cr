@@ -4,8 +4,8 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
-require "./calendar_event"
-require "./calendar_events"
+require "./event"
+require "./events"
 
 module Google
   module RFC3339Converter
@@ -31,13 +31,7 @@ module Google
   end
 
   class Calendar
-    GOOGLE_URI = URI.parse("https://www.googleapis.com")
-
     def initialize(@auth : Google::Auth | Google::FileAuth, @user_agent : String = "Switch")
-    end
-
-    def get_token
-      @auth.get_token.access_token
     end
 
     def calendar_list
@@ -67,7 +61,7 @@ module Google
       end
 
       raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
-      CalendarEvents.from_json response.body
+      Calendar::Events.from_json response.body
     end
 
     def event(event_id, calendar_id = "primary")
@@ -84,7 +78,7 @@ module Google
 
       return nil if {HTTP::Status::GONE, HTTP::Status::NOT_FOUND}.includes?(response.status)
       raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
-      CalendarEvent.from_json response.body
+      Calendar::Event.from_json response.body
     end
 
     def delete(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::None)
@@ -143,7 +137,7 @@ module Google
       end
 
       raise "error creating booking on #{calendar_id} - #{response.status} (#{response.status_code})\nRequested: #{body}\n#{response.body}" unless response.success?
-      CalendarEvent.from_json response.body
+      Calendar::Event.from_json response.body
     end
 
     def update(
@@ -181,7 +175,7 @@ module Google
       end
 
       raise "error updating booking on #{calendar_id} - #{response.status} (#{response.status_code})\nRequested: #{body}\n#{response.body}" unless response.success?
-      CalendarEvent.from_json response.body
+      Calendar::Event.from_json response.body
     end
 
     # Move an event to another calendar
@@ -204,12 +198,16 @@ module Google
 
       raise "error moving event #{event_id} from #{calendar_id} to #{destination_id}- #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
 
-      CalendarEvent.from_json response.body
+      Calendar::Event.from_json response.body
     end
 
     private def events_other_options(opts) : String
       opts_string = opts.map { |key, value| "#{key}=#{value}" }.join("&")
       "&#{opts_string}"
+    end
+
+    private def get_token
+      @auth.get_token.access_token
     end
 
     protected def extended_properties(opts, extended_properties)

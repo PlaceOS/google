@@ -11,7 +11,7 @@ describe Google::Calendar do
       CalendarHelper.mock_token
       CalendarHelper.mock_events
 
-      CalendarHelper.calendar.events.is_a?(Google::Calendar::Events).should eq(true)
+      CalendarHelper.calendar.events(period_start: Time.utc(2016, 2, 15, 10, 20, 30)).is_a?(Google::Calendar::Events).should eq(true)
     end
   end
 
@@ -54,7 +54,7 @@ module CalendarHelper
   end
 
   def mock_events
-    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2020-02-19T13:00:00Z")
+    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2016-02-15T10:20:30Z")
       .to_return(body: events_response.to_json)
   end
 

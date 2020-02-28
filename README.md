@@ -28,7 +28,7 @@ Currently supports following:
    ```yaml
    dependencies:
      google:
-       github: red-ant/google
+       github: PlaceOS/google
    ```
 
 2. Run `shards install`
@@ -67,6 +67,7 @@ directory.lookup("test@example.com")
 ```
 
 ### Calendar
+
 ```crystal
 # auth variable below can be instance of Google::Auth or Google::FileAuth
 calendar = Google::Calendar.new(auth: auth)
@@ -99,7 +100,7 @@ To run specs `crystal spec`
 
 ## Contributing
 
-1. Fork it (<https://github.com/red-ant/google/fork>)
+1. Fork it (<https://github.com/PlaceOS/google/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

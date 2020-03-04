@@ -50,10 +50,12 @@ module Google
       updated = updated_since ? "&updatedMin=#{updated_since.to_rfc3339}" : nil
       pend = period_end ? "&timeMax=#{period_end.to_rfc3339}" : nil
 
+      request_uri = "/calendar/v3/calendars/#{calendar_id}/events?maxResults=2500&singleEvents=true&timeMin=#{period_start.to_rfc3339}#{pend}#{updated}#{other_options}"
+
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(
           "GET",
-          "/calendar/v3/calendars/#{calendar_id}/events?maxResults=2500&singleEvents=true&timeMin=#{period_start.to_rfc3339}#{pend}#{updated}#{other_options}",
+          request_uri,
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "User-Agent"    => @user_agent,
@@ -62,7 +64,33 @@ module Google
       end
 
       raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
-      Calendar::Events.from_json response.body
+      results = Calendar::Events.from_json response.body
+
+      # Return all the pages, nextPageToken will be nil when there are no more
+      next_page = results.nextPageToken
+      loop do
+        break unless next_page
+
+        response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+          client.exec(
+            "GET",
+            "#{request_uri}&pageToken=#{next_page}",
+            HTTP::Headers{
+              "Authorization" => "Bearer #{get_token}",
+              "User-Agent" => @user_agent,
+            }
+          )
+        end
+
+        raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+        next_results = Calendar::Events.from_json response.body
+
+        # Append the results
+        results.items.concat(next_results.items)
+        next_page = next_results.nextPageToken
+      end
+
+      results
     end
 
     def event(event_id, calendar_id = "primary")

@@ -22,7 +22,7 @@ module Google
       property description : String?
       property location : String?
       property colorId : String?
-      property creator : Calendar::Attendee
+      property creator : Calendar::Attendee?
       property organizer : Calendar::Attendee?
       property start : Calendar::GTime
       property end : Calendar::GTime?

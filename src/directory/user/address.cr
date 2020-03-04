@@ -11,7 +11,7 @@ module Google
         property poBox : String?
         property extendedAddress : String?
         property streetAddress : String?
-        property locality : String
+        property locality : String?
         property region : String?
         property postalCode : String?
         property country : String?

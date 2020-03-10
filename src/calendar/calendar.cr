@@ -7,6 +7,7 @@ require "../auth/file_auth"
 require "./event"
 require "./events"
 require "./g_time"
+require "./list"
 
 module Google
   module RFC3339Converter
@@ -35,13 +36,17 @@ module Google
     def initialize(@auth : Google::Auth | Google::FileAuth, @user_agent : String = "Switch")
     end
 
-    def calendar_list
-      ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+    def calendar_list : Array(Calendar::ListEntry)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec("GET", "/calendar/v3/users/me/calendarList", HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
         })
       end
+
+      raise "error fetching calendar list - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      results = Calendar::List.from_json response.body
+      results.items
     end
 
     # example additional options: showDeleted
@@ -77,7 +82,7 @@ module Google
             "#{request_uri}&pageToken=#{next_page}",
             HTTP::Headers{
               "Authorization" => "Bearer #{get_token}",
-              "User-Agent" => @user_agent,
+              "User-Agent"    => @user_agent,
             }
           )
         end

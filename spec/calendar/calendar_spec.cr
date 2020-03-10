@@ -6,7 +6,8 @@ describe Google::Calendar do
       CalendarHelper.mock_token
       CalendarHelper.mock_calendar_list
 
-      CalendarHelper.calendar.calendar_list.is_a?(HTTP::Client::Response).should eq(true)
+      cals = CalendarHelper.calendar.calendar_list
+      cals.first.summary.should eq("override")
     end
   end
 
@@ -75,7 +76,23 @@ module CalendarHelper
 
   def mock_calendar_list
     WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/users/me/calendarList")
-      .to_return(body: {"kind": "calendar#calendarList"}.to_json)
+      .to_return(body: {
+        "kind":          "calendar#calendarList",
+        "etag":          "12121",
+        "nextSyncToken": "TOKEN123",
+        "items":         [{
+          "kind":            "hi",
+          "etag":            "12121",
+          "id":              "123456789",
+          "summary":         "example summary",
+          "summaryOverride": "override",
+
+          "hidden":   false,
+          "selected": true,
+          "primary":  true,
+          "deleted":  false,
+        }],
+      }.to_json)
   end
 
   def mock_events

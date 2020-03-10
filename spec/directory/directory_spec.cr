@@ -38,14 +38,14 @@ module DirectoryHelper
 
   def user_query_response
     {
-      "kind": "admin#directory#users",
-      "users": [user_lookup_response]
+      "kind":  "admin#directory#users",
+      "users": [user_lookup_response],
     }
   end
 
   def mock_user_query
-    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/users?domain=example.com&maxResults=500&projection=full&viewType=admin_view").
-      to_return(body: user_query_response.to_json)
+    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/users?domain=example.com&maxResults=500&projection=full&viewType=admin_view")
+      .to_return(body: user_query_response.to_json)
   end
 
   def mock_lookup

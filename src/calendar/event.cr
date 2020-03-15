@@ -44,6 +44,8 @@ module Google
       property guestsCanSeeOtherGuests : Bool?
       property privateCopy : Bool?
       property locked : Bool?
+
+      property conferenceData : JSON::Any?
     end
   end
 end

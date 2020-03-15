@@ -10,8 +10,11 @@ require "./user/user_query"
 
 module Google
   class Directory
-    def initialize(@auth : Google::Auth | Google::FileAuth, @domain : String, @projection : String = "full", @view_type : String = "admin_view", @user_agent : String = "Switch")
+    def initialize(@auth : Google::Auth | Google::FileAuth, @domain : String, @projection : String = "full", @view_type : String = "admin_view", user_agent : String? = nil)
+      @user_agent = user_agent || @auth.user_agent
     end
+
+    @user_agent : String
 
     # API details: https://developers.google.com/admin-sdk/directory/v1/reference/users/list
     def users(query = nil, limit = 500, **opts)

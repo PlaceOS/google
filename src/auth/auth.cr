@@ -18,8 +18,9 @@ module Google
     TOKENS_CACHE      = {} of String => Token
 
     @scopes : String
+    property user_agent : String
 
-    def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = "Switch")
+    def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = "Google on Crystal")
       @scopes = scopes.is_a?(Array) ? scopes.join(", ") : scopes
     end
 

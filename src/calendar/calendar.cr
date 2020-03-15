@@ -33,8 +33,11 @@ module Google
   end
 
   class Calendar
-    def initialize(@auth : Google::Auth | Google::FileAuth, @user_agent : String = "Switch")
+    def initialize(@auth : Google::Auth | Google::FileAuth, user_agent : String? = nil)
+      @user_agent = user_agent || @auth.user_agent
     end
+
+    @user_agent : String
 
     def calendar_list : Array(Calendar::ListEntry)
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|

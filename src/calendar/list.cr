@@ -18,10 +18,10 @@ module Google
       property foregroundColor : String?
       property accessRole : String?
 
-      property hidden : Bool
-      property selected : Bool
-      property primary : Bool
-      property deleted : Bool
+      property hidden : Bool?
+      property selected : Bool?
+      property primary : Bool?
+      property deleted : Bool?
 
       def summary : String
         summaryOverride || summaryMain

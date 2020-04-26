@@ -6,11 +6,14 @@ require "./name"
 require "./organization"
 require "./phone"
 require "./relation"
+require "./posix_account"
 
 module Google
   class Directory
     class User
       include JSON::Serializable
+
+      property name : Name
 
       # Optional for creating a user
       property kind : String?
@@ -46,6 +49,7 @@ module Google
       property locations : Array(Location)?
       property keywords : Array(Relation)?
       property gender : Gender?
+      property posixAccounts : Array(PosixAccount)?
 
       property customerId : String?
       property orgUnitPath : String?

@@ -59,6 +59,7 @@ module Google
       property includeInGlobalAddressList : Bool
       property thumbnailPhotoUrl : String?
       property thumbnailPhotoEtag : String?
+      property recoveryPhone : String?
 
       property customSchemas : Hash(String, Hash(String, String))?
     end

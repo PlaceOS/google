@@ -5,14 +5,20 @@ module Google
 
       property id : String?
       property email : String
-      property displayName : String?
+
+      @[JSON::Field(key: "displayName")]
+      property display_name : String?
       property organizer : Bool?
       property self : Bool?
       property resource : Bool?
       property optional : Bool?
-      property responseStatus : String?
+
+      @[JSON::Field(key: "responseStatus")]
+      property response_status : String?
       property comment : String?
-      property additionalGuests : Int32?
+
+      @[JSON::Field(key: "additionalGuests")]
+      property additional_guests : Int32?
     end
   end
 end

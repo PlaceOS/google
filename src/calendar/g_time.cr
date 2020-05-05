@@ -6,17 +6,17 @@ module Google
       def initialize(datetime : Time, all_day = false)
         tz = datetime.location.name
         # ignore special cases
-        @timeZone = {"Local", ""}.includes?(tz) ? nil : tz
+        @time_zone = {"Local", ""}.includes?(tz) ? nil : tz
 
         if all_day
           @date = datetime
         else
-          @dateTime = datetime
+          @date_time = datetime
         end
       end
 
       def time : Time
-        if dtime = @dateTime
+        if dtime = @date_time
           dtime
         elsif dday = @date
           dday
@@ -29,10 +29,11 @@ module Google
       @[JSON::Field(converter: ::Time::Format.new("%F"), emit_null: true)]
       property date : Time?
 
-      @[JSON::Field(emit_null: true)]
-      property dateTime : Time?
+      @[JSON::Field(emit_null: true, key: "dateTime")]
+      property date_time : Time?
 
-      property timeZone : String?
+      @[JSON::Field(key: "timeZone")]
+      property time_zone : String?
     end
   end
 end

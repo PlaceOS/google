@@ -11,10 +11,17 @@ module Google
       @[JSON::Field(converter: Google::RFC3339Converter)]
       property updated : ::Time
 
-      property timeZone : String
-      property accessRole : String
-      property nextPageToken : String?
-      property nextSyncToken : String
+      @[JSON::Field(key: "timeZone")]
+      property time_zone : String
+
+      @[JSON::Field(key: "accessRole")]
+      property access_role : String
+
+      @[JSON::Field(key: "nextPageToken")]
+      property next_page_token : String?
+
+      @[JSON::Field(key: "nextSyncToken")]
+      property next_sync_token : String
       property items : Array(Calendar::Event)
     end
   end

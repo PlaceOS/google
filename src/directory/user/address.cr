@@ -5,18 +5,32 @@ module Google
         include JSON::Serializable
 
         property type : String
-        property customType : String?
-        property sourceIsStructured : Bool?
+
+        @[JSON::Field(key: "customType")]
+        property custom_type : String?
+
+        @[JSON::Field(key: "sourceIsStructured")]
+        property source_is_structured : Bool?
         property formatted : String?
-        property poBox : String?
-        property extendedAddress : String?
-        property streetAddress : String?
+
+        @[JSON::Field(key: "poBox")]
+        property po_box : String?
+
+        @[JSON::Field(key: "extendedAddress")]
+        property extended_address : String?
+
+        @[JSON::Field(key: "streetAddress")]
+        property street_address : String?
         property locality : String?
         property region : String?
-        property postalCode : String?
+
+        @[JSON::Field(key: "postalCode")]
+        property postal_code : String?
         property country : String?
         property primary : Bool?
-        property countryCode : String?
+
+        @[JSON::Field(key: "countryCode")]
+        property country_code : String?
       end
     end
   end

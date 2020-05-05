@@ -75,7 +75,7 @@ module Google
       results = Calendar::Events.from_json response.body
 
       # Return all the pages, nextPageToken will be nil when there are no more
-      next_page = results.nextPageToken
+      next_page = results.next_page_token
       loop do
         break unless next_page
 
@@ -95,7 +95,7 @@ module Google
 
         # Append the results
         results.items.concat(next_results.items)
-        next_page = next_results.nextPageToken
+        next_page = next_results.next_page_token
       end
 
       results

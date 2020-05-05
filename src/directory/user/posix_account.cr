@@ -5,15 +5,22 @@ module Google
       class PosixAccount
         include JSON::Serializable
 
-        property accountId : String?
+        @[JSON::Field(key: "accountId")]
+        property account_id : String?
         # https://en.wikipedia.org/wiki/Gecos_field
         property gecos : String?
         property gid : UInt64?
-        property homeDirectory : String?
-        property operatingSystemType : String?
+
+        @[JSON::Field(key: "homeDirectory")]
+        property home_directory : String?
+
+        @[JSON::Field(key: "operatingSystemType")]
+        property operating_system_type : String?
         property primary : Bool?
         property shell : String?
-        property systemId : String?
+
+        @[JSON::Field(key: "systemId")]
+        property system_id : String?
         property uid : UInt64?
         property username : String?
       end

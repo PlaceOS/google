@@ -6,7 +6,9 @@ module Google
 
         property address : String
         property type : String?
-        property customType : String?
+
+        @[JSON::Field(key: "customType")]
+        property custom_type : String?
         property primary : Bool?
       end
     end

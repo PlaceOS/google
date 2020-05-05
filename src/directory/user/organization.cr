@@ -8,14 +8,20 @@ module Google
         property title : String
         property primary : Bool?
         property type : String?
-        property customType : String?
+
+        @[JSON::Field(key: "customType")]
+        property custom_type : String?
         property department : String?
         property symbol : String?
         property location : String?
         property description : String?
         property domain : String?
-        property costCenter : String?
-        property fullTimeEquivalent : Int32?
+
+        @[JSON::Field(key: "costCenter")]
+        property cost_center : String?
+
+        @[JSON::Field(key: "fullTimeEquivalent")]
+        property full_time_equivalent : Int32?
       end
     end
   end

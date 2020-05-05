@@ -19,49 +19,94 @@ module Google
       property kind : String?
       property id : String?
       property etag : String?
-      property primaryEmail : String
-      property isAdmin : Bool
-      property isDelegatedAdmin : Bool
-      property lastLoginTime : Time?
-      property creationTime : Time
-      property deletionTime : Time?
-      property agreedToTerms : Bool
+
+      @[JSON::Field(key: "primaryEmail")]
+      property primary_email : String
+
+      @[JSON::Field(key: "isAdmin")]
+      property is_admin : Bool
+
+      @[JSON::Field(key: "isDelegatedAdmin")]
+      property is_delegated_admin : Bool
+
+      @[JSON::Field(key: "lastLoginTime")]
+      property last_login_time : Time?
+
+      @[JSON::Field(key: "creationTime")]
+      property creation_time : Time
+
+      @[JSON::Field(key: "deletionTime")]
+      property deletion_time : Time?
+
+      @[JSON::Field(key: "agreedToTerms")]
+      property agreed_to_terms : Bool
       property password : String?
-      property hashFunction : String?
+
+      @[JSON::Field(key: "hashFunction")]
+      property hash_function : String?
       property suspended : Bool
 
-      property suspensionReason : String?
+      @[JSON::Field(key: "suspensionReason")]
+      property suspension_reason : String?
       property archived : Bool?
-      property changePasswordAtNextLogin : Bool
-      property ipWhitelisted : Bool
+
+      @[JSON::Field(key: "changePasswordAtNextLogin")]
+      property change_password_at_next_login : Bool
+
+      @[JSON::Field(key: "ipWhitelisted")]
+      property ip_whitelisted : Bool
 
       property emails : Array(Email)
       property relations : Array(Relation)?
-      property externalIds : Array(Relation)?
+
+      @[JSON::Field(key: "externalIds")]
+      property external_ids : Array(Relation)?
       property addresses : Array(Address)?
       property organizations : Array(Organization)?
       property phones : Array(Phone)?
       property languages : Array(Language)?
       property aliases : Array(String)?
-      property nonEditableAliases : Array(String)?
+
+      @[JSON::Field(key: "nonEditableAliases")]
+      property non_editable_aliases : Array(String)?
       property notes : NamedTuple(value: String, contentType: String?)?
       property websites : Array(Phone)?
       property locations : Array(Location)?
       property keywords : Array(Relation)?
       property gender : Gender?
-      property posixAccounts : Array(PosixAccount)?
 
-      property customerId : String?
-      property orgUnitPath : String?
-      property isMailboxSetup : Bool
-      property isEnrolledIn2Sv : Bool?
-      property isEnforcedIn2Sv : Bool?
-      property includeInGlobalAddressList : Bool
-      property thumbnailPhotoUrl : String?
-      property thumbnailPhotoEtag : String?
-      property recoveryPhone : String?
+      @[JSON::Field(key: "posixAccounts")]
+      property posix_accounts : Array(PosixAccount)?
 
-      property customSchemas : Hash(String, Hash(String, String))?
+      @[JSON::Field(key: "customerId")]
+      property customer_id : String?
+
+      @[JSON::Field(key: "orgUnitPath")]
+      property org_unit_path : String?
+
+      @[JSON::Field(key: "isMailboxSetup")]
+      property is_mailbox_setup : Bool
+
+      @[JSON::Field(key: "isEnrolledIn2Sv")]
+      property is_enrolled_in_2sv : Bool?
+
+      @[JSON::Field(key: "isEnforcedIn2Sv")]
+      property is_enforced_in_2sv : Bool?
+
+      @[JSON::Field(key: "includeInGlobalAddressList")]
+      property include_in_global_address_list : Bool
+
+      @[JSON::Field(key: "thumbnailPhotoUrl")]
+      property thumbnail_photo_url : String?
+
+      @[JSON::Field(key: "thumbnailPhotoEtag")]
+      property thumbnail_photo_etag : String?
+
+      @[JSON::Field(key: "recovery_phone")]
+      property recovery_phone : String?
+
+      @[JSON::Field(key: "customSchemas")]
+      property custom_schemas : Hash(String, Hash(String, String))?
     end
   end
 end

@@ -4,9 +4,14 @@ module Google
       class Name
         include JSON::Serializable
 
-        property givenName : String
-        property familyName : String
-        property fullName : String?
+        @[JSON::Field(key: "givenName")]
+        property given_name : String
+
+        @[JSON::Field(key: "familyName")]
+        property family_name : String
+
+        @[JSON::Field(key: "fullName")]
+        property full_name : String?
       end
     end
   end

@@ -5,7 +5,9 @@ module Google
 
       property kind : String
       property users : Array(User)
-      property nextPageToken : String?
+
+      @[JSON::Field(key: "nextPageToken")]
+      property next_page_token : String?
     end
   end
 end

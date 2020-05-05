@@ -1,13 +1,13 @@
 name: google
-version: 1.0.3
+version: 2.0.0
 
 dependencies:
   connect-proxy:
     github: spider-gazelle/connect-proxy
-    version: ~> 1.0.0
+    version: ~> 1.0
   jwt:
     github: crystal-community/jwt
-    version: ~> 1.4.0
+    version: ~> 1.4
 
 development_dependencies:
   webmock:

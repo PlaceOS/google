@@ -4,8 +4,11 @@ module Google
       class Language
         include JSON::Serializable
 
-        property languageCode : String
-        property customLanguage : String?
+        @[JSON::Field(key: "languageCode")]
+        property language_code : String
+
+        @[JSON::Field(key: "customLanguage")]
+        property custom_language : String?
       end
     end
   end

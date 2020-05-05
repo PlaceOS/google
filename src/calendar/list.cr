@@ -8,15 +8,27 @@ module Google
       property id : String
 
       @[JSON::Field(key: "summary")]
-      property summaryMain : String
+      property summary_main : String
       property description : String?
       property location : String?
-      property timeZone : String?
-      property summaryOverride : String?
-      property colorId : String?
-      property backgroundColor : String?
-      property foregroundColor : String?
-      property accessRole : String?
+
+      @[JSON::Field(key: "timeZone")]
+      property time_zone : String?
+
+      @[JSON::Field(key: "summaryOverride")]
+      property summary_override : String?
+
+      @[JSON::Field(key: "colorId")]
+      property color_id : String?
+
+      @[JSON::Field(key: "backgroundColor")]
+      property background_color : String?
+
+      @[JSON::Field(key: "foregroundColor")]
+      property foreground_color : String?
+
+      @[JSON::Field(key: "accessRole")]
+      property access_role : String?
 
       property hidden : Bool?
       property selected : Bool?
@@ -24,7 +36,7 @@ module Google
       property deleted : Bool?
 
       def summary : String
-        summaryOverride || summaryMain
+        summary_override || summary_main
       end
     end
 
@@ -33,8 +45,12 @@ module Google
 
       property kind : String
       property etag : String
-      property nextPageToken : String?
-      property nextSyncToken : String
+
+      @[JSON::Field(key: "nextPageToken")]
+      property next_page_token : String?
+
+      @[JSON::Field(key: "nextSyncToken")]
+      property next_sync_token : String
 
       property items : Array(Calendar::ListEntry)
     end

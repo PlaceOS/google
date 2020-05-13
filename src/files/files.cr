@@ -17,7 +17,7 @@ module Google
 
     def files
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec("GET", "/drive/v3/files", HTTP::Headers{
+        client.exec("GET", "/drive/v3/files?fields=*", HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
         })
@@ -30,7 +30,7 @@ module Google
 
     def file(id : String)
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec("GET", "/drive/v3/files/#{id}?fields=webContentLink,id,name", HTTP::Headers{
+        client.exec("GET", "/drive/v3/files/#{id}?fields=*", HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
         })

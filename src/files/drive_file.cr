@@ -7,7 +7,7 @@ module Google
     class DriveFile
       include JSON::Serializable
 
-      @[JSON::Field(key: "webContentLink")]
+      @[JSON::Field(key: "webViewLink")]
       property link : String?
 
       property id : String?

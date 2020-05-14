@@ -1,6 +1,7 @@
 require "json"
 require "http"
 require "file"
+require "../calendar/attachment"
 
 module Google
   class Files
@@ -28,6 +29,10 @@ module Google
           HTTP::Headers{"Content-Type" => content_type})
         builder.finish
         io.to_s
+      end
+
+      def to_attachment
+        Google::Calendar::Attachment.new(id, link)
       end
     end
   end

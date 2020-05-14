@@ -20,6 +20,11 @@ Currently supports following:
   - Delete calendar event
   - Update calendar event
   - Move calendar event
+* Drive
+  - Listing Files in drive
+  - Single file fetch
+  - Create file
+  - Delete file
 
 ## Installation
 
@@ -82,7 +87,7 @@ calendar.events
 calendar.event("event_id")
 
 # To create calendar event
-calendar.create(event_start: Time.utc, event_end: Time.utc + 1.hour, attendees: ["test@example.com"], summary: "ACA test event", description: "test description")
+calendar.create(event_start: Time.utc, event_end: Time.utc + 1.hour, attendees: ["test@example.com"], summary: "ACA test event", description: "test description", attachments: [Google::Calendar::Attachment.new("file_id", "file_url in google drive")])
 
 # To update single calendar event by id
 calendar.update("event_id", summary: "updated summary")
@@ -92,6 +97,25 @@ calendar.delete("event_id")
 
 # To move single calendar event by id
 calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id")
+```
+
+### Files
+
+```crystal
+# auth variable below can be instance of Google::Auth or Google::FileAuth
+drive_files = Google::Files.new(auth: auth)
+
+# To fetch files list
+drive_files.files
+
+# To fetch single file by id
+drive_files.file("file_id")
+
+# To create file
+drive_files.create(name: "test.txt", content_bytes: "Hello world!", content_type: "text/plain")
+
+# To delete single file by id
+drive_files.delete("file_id")
 ```
 
 ## Development

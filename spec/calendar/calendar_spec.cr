@@ -64,6 +64,17 @@ describe Google::Calendar do
       CalendarHelper.calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id").is_a?(Google::Calendar::Event).should eq(true)
     end
   end
+
+  describe "#availability" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_availability
+
+      availability_list = CalendarHelper.calendar.availability(mailboxes: ["test@example.com"], starts_at: Time.utc(2016, 2, 15, 10, 20, 30), ends_at: Time.utc(2016, 2, 15, 11, 20, 30))
+
+      availability_list.first.is_a?(Google::Calendar::CalendarAvailability).should eq(true)
+    end
+  end
 end
 
 module CalendarHelper
@@ -92,6 +103,19 @@ module CalendarHelper
           "primary":  true,
           "deleted":  false,
         }],
+      }.to_json)
+  end
+
+  def mock_availability
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/freeBusy")
+      .to_return(body: {
+        "kind":      "calendar#freeBusy",
+        "timeMin":   "2020-05-11T04:12:39.000Z",
+        "timeMax":   "2020-05-25T04:12:39.000Z",
+        "calendars": {"test@example.com": {"busy": [{
+          "start": "2020-05-12T00:41:08-04:00",
+          "end":   "2020-05-12T01:41:08-04:00",
+        }]}},
       }.to_json)
   end
 

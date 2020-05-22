@@ -21,7 +21,7 @@ module Google
       property next_page_token : String?
 
       @[JSON::Field(key: "nextSyncToken")]
-      property next_sync_token : String
+      property next_sync_token : String?
       property items : Array(Calendar::Event)
     end
   end

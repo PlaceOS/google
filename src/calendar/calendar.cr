@@ -163,7 +163,7 @@ module Google
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(
           "POST",
-          "/calendar/v3/calendars/#{calendar_id}/events?conferenceDataVersion=1",
+          "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=1",
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",
@@ -201,7 +201,7 @@ module Google
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(
           "PATCH",
-          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?sendUpdates=#{notify}",
+          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?supportsAttachments=true&sendUpdates=#{notify}",
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",

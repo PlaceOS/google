@@ -119,12 +119,12 @@ module CalendarHelper
   end
 
   def mock_event_create
-    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1")
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&supportsAttachments=true")
       .to_return(body: event_response.to_json)
   end
 
   def mock_event_update
-    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=None")
+    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?supportsAttachments=true&sendUpdates=None")
       .to_return(body: event_response.to_json)
   end
 

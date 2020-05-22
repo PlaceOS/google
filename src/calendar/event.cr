@@ -1,5 +1,6 @@
 require "./attendee"
 require "./g_time"
+require "./attachment"
 
 module Google
   class Calendar
@@ -75,6 +76,8 @@ module Google
 
       @[JSON::Field(key: "conferenceData")]
       property conference_data : JSON::Any?
+
+      property attachments : Array(Attachment)?
     end
   end
 end

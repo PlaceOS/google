@@ -77,7 +77,7 @@ module Google
       @[JSON::Field(key: "conferenceData")]
       property conference_data : JSON::Any?
 
-      property attachments : Array(Attachment)?
+      property attachments : Array(Attachment) = [] of Google::Calendar::Attachment
     end
   end
 end

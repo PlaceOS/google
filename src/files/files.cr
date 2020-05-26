@@ -40,6 +40,18 @@ module Google
       Files::DriveFile.from_json response.body
     end
 
+    def download_file(id : String)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec("GET", "/drive/v3/files/#{id}?alt=media&fields=*", HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "User-Agent"    => @user_agent,
+        })
+      end
+
+      raise "error downloading file - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      response.body
+    end
+
     def create(name : String, content_bytes : String, content_type : String)
       body = Google::Files::DriveFile.new(name).body(content_bytes: content_bytes, content_type: content_type)
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|

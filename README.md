@@ -20,6 +20,7 @@ Currently supports following:
   - Delete calendar event
   - Update calendar event
   - Move calendar event
+  - Availability
 * Drive
   - Listing Files in drive
   - Single file fetch
@@ -97,6 +98,9 @@ calendar.delete("event_id")
 
 # To move single calendar event by id
 calendar.move(event_id: "event_id", calendar_id: "original_calendar_id", destination_id: "destination_calendar_id")
+
+# To fetch availability (free/busy) for a set of mailboxes
+calendar.availability(mailboxes: ["test@example.com", "foo@bar.com"], starts_at: Time.utc, ends_at: Time.utc + 1.hour)
 ```
 
 ### Files

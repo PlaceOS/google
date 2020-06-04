@@ -8,6 +8,7 @@ require "./event"
 require "./events"
 require "./g_time"
 require "./list"
+require "./availability"
 
 module Google
   module RFC3339Converter
@@ -236,6 +237,34 @@ module Google
       raise "error moving event #{event_id} from #{calendar_id} to #{destination_id}- #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
 
       Calendar::Event.from_json response.body
+    end
+
+    # Find availability (free/busy) for calendars
+    def availability(mailboxes : Array(String), starts_at : Time, ends_at : Time)
+      time_min = GTime.new(starts_at)
+      items = mailboxes.map { |mailbox| {"id" => mailbox} }
+      body = {
+        "timeMin"  => time_min.date_time,
+        "timeMax"  => GTime.new(ends_at).date_time,
+        "timeZone" => time_min.time_zone,
+        "items"    => items,
+      }.to_json
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(
+          "POST",
+          "/calendar/v3/freeBusy",
+          HTTP::Headers{
+            "Authorization" => "Bearer #{get_token}",
+            "Content-Type"  => "application/json",
+            "User-Agent"    => @user_agent,
+          },
+          body
+        )
+      end
+
+      raise "error fetching free/busy information #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+
+      Calendar::Availability.parse_json(response.body).value
     end
 
     private def events_other_options(opts) : String

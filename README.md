@@ -26,6 +26,10 @@ Currently supports following:
   - Single file fetch
   - Create file
   - Delete file
+* Translate
+  - List available languages
+  - Detect source language
+  - Translate one language to another
 
 ## Installation
 
@@ -120,6 +124,28 @@ drive_files.create(name: "test.txt", content_bytes: "Hello world!", content_type
 
 # To delete single file by id
 drive_files.delete("file_id")
+```
+
+### Translation
+
+```crystal
+# auth variable below can be instance of Google::Auth or Google::FileAuth
+translate = Google::Translation.new(auth: auth)
+
+# To fetch available languages
+translate.languages
+
+# To fetch available languages as localized values
+translate.languages("de") # Where "de" is a language code
+
+# To detect the language of a given string (or strings)
+translate.detect_language("Some text to detect")
+
+# To translate a string into a target language (auto detecting the source)
+translate.translate("Some text to translate", to: "de")
+
+# To translate a string into a target language (with a manual source)
+translate.translate("Some text to translate", to: "de", from: "en")
 ```
 
 ## Development

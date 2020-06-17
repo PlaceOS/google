@@ -22,8 +22,7 @@ module Google
           "User-Agent"    => @user_agent,
         })
       end
-
-      raise "error listing files - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      Google::Exception.raise_on_failure(response)
 
       Files::List.from_json response.body
     end
@@ -35,8 +34,8 @@ module Google
           "User-Agent"    => @user_agent,
         })
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error fetching file - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       Files::DriveFile.from_json response.body
     end
 
@@ -47,8 +46,8 @@ module Google
           "User-Agent"    => @user_agent,
         })
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error downloading file - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       response.body
     end
 
@@ -62,8 +61,8 @@ module Google
         },
           body)
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error creating file - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       Files::DriveFile.from_json response.body
     end
 
@@ -74,8 +73,8 @@ module Google
           "User-Agent"    => @user_agent,
         })
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error fetching file - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       true
     end
 

@@ -37,8 +37,8 @@ module Google
           }
         )
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error fetching users from #{@domain} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       UserQuery.from_json response.body
     end
 
@@ -54,8 +54,8 @@ module Google
           }
         )
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error requesting user #{user_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       User.from_json response.body
     end
 

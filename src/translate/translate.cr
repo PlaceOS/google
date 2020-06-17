@@ -20,14 +20,14 @@ module Google
 
     def detect_language(text : String | Array(String))
       response = ConnectProxy::HTTPClient.new(TRANSLATE_URI) do |client|
-        client.exec("POST", "/language/translate/v2/detect?#{params}", HTTP::Headers{
+        client.exec("POST", "/language/translate/v2/detect", HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
-        }, body: {"text" => text}.to_json)
+        }, body: {"q" => text}.to_json)
       end
 
       json = JSON.parse(response.body)
-      Array(DetectionResult).from_json(json["data"]["detections"].to_json)
+      Array(Array(DetectionResult)).from_json(json["data"]["detections"].to_json)
     end
 
     def translate(text : String | Array(String), to target : String, from source : String? = nil, format : String = "text", model : String = "nmt")

@@ -2,7 +2,7 @@
 
 # google
 
-Provides ability to interact with google services.
+Provides ability to interact with google services. Feel free to follow [our guide](https://docs.google.com/document/d/1JqyFG8VStwUH01EyR1mJVbrfJQOedm5tUMQCgyVsWbs/edit?usp=sharing) on how to configure API access.
 
 Currently supports following:
 

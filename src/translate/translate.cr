@@ -19,13 +19,11 @@ module Google
     end
 
     def detect_language(text : String | Array(String))
-      text = text.is_a?(String) ? [text] : text
-      params = text.map { |t| "q=#{URI.encode(t)}" }.join("&")
       response = ConnectProxy::HTTPClient.new(TRANSLATE_URI) do |client|
-        client.exec("GET", "/language/translate/v2/detect?#{params}", HTTP::Headers{
+        client.exec("POST", "/language/translate/v2/detect?#{params}", HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
-        })
+        }, body: {"text" => text}.to_json)
       end
 
       json = JSON.parse(response.body)
@@ -33,18 +31,12 @@ module Google
     end
 
     def translate(text : String | Array(String), to target : String, from source : String? = nil, format : String = "text", model : String = "nmt")
-      text = text.is_a?(String) ? [text] : text
-      query = text.map { |t| "q=#{URI.encode(t)}" }.join("&")
-      options = {"target" => target, "source" => source, "format" => format, "model" => model}
-
-      params = options.compact.map { |k, v| "#{k}=#{v}" }.join("&")
-      params = {query, params}.join("&")
-
+      options = {"q" => text, "target" => target, "source" => source, "format" => format, "model" => model}
       response = ConnectProxy::HTTPClient.new(TRANSLATE_URI) do |client|
-        client.exec("GET", "/language/translate/v2?#{params}", HTTP::Headers{
+        client.exec("POST", "/language/translate/v2", HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
-        })
+        }, body: options.compact.to_json)
       end
 
       json = JSON.parse(response.body)

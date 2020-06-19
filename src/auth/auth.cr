@@ -40,15 +40,13 @@ module Google
           "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=#{jwt_token}"
         )
       end
+      Google::Exception.raise_on_failure(response)
 
-      if response.success?
-        token = Token.from_json response.body
-        token.expires = token.expires + token.expires_in.seconds - EXPIRY
-        TOKENS_CACHE[token_lookup] = token
-        token
-      else
-        raise "error fetching token #{response.status} (#{response.status_code})\n#{response.body}"
-      end
+      token = Token.from_json response.body
+      token.expires = token.expires + token.expires_in.seconds - EXPIRY
+      TOKENS_CACHE[token_lookup] = token
+
+      token
     end
 
     private def assertion

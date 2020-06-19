@@ -16,7 +16,7 @@ describe Google::FileAuth do
           .to_return(status: 500, body: "oops")
 
         auth = Google::FileAuth.new(file_path: FileAuthHelper.client_auth_file, scopes: "TEST_GOOGLE_API_SCOPE", sub: "admin@example.com")
-        expect_raises(Exception, "error fetching token INTERNAL_SERVER_ERROR (500)") do
+        expect_raises(Google::Exception, "Internal Server Error") do
           auth.get_token
         end
       end

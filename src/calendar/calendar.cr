@@ -47,8 +47,8 @@ module Google
           "User-Agent"    => @user_agent,
         })
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error fetching calendar list - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       results = Calendar::List.from_json response.body
       results.items
     end
@@ -71,8 +71,8 @@ module Google
           }
         )
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
       results = Calendar::Events.from_json response.body
 
       # Return all the pages, nextPageToken will be nil when there are no more
@@ -90,8 +90,8 @@ module Google
             }
           )
         end
+        Google::Exception.raise_on_failure(response)
 
-        raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
         next_results = Calendar::Events.from_json response.body
 
         # Append the results
@@ -115,7 +115,8 @@ module Google
       end
 
       return nil if {HTTP::Status::GONE, HTTP::Status::NOT_FOUND}.includes?(response.status)
-      raise "error fetching events from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      Google::Exception.raise_on_failure(response)
+
       Calendar::Event.from_json response.body
     end
 
@@ -136,7 +137,8 @@ module Google
 
       # Not an error if the booking doesn't exist
       return true if {HTTP::Status::GONE, HTTP::Status::NOT_FOUND}.includes?(response.status)
-      raise "error deleting event #{event_id} from #{calendar_id} - #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      Google::Exception.raise_on_failure(response)
+
       true
     end
 
@@ -173,8 +175,8 @@ module Google
           body
         )
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error creating booking on #{calendar_id} - #{response.status} (#{response.status_code})\nRequested: #{body}\n#{response.body}" unless response.success?
       Calendar::Event.from_json response.body
     end
 
@@ -211,8 +213,8 @@ module Google
           body
         )
       end
+      Google::Exception.raise_on_failure(response)
 
-      raise "error updating booking on #{calendar_id} - #{response.status} (#{response.status_code})\nRequested: #{body}\n#{response.body}" unless response.success?
       Calendar::Event.from_json response.body
     end
 
@@ -233,8 +235,7 @@ module Google
           }
         )
       end
-
-      raise "error moving event #{event_id} from #{calendar_id} to #{destination_id}- #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      Google::Exception.raise_on_failure(response)
 
       Calendar::Event.from_json response.body
     end
@@ -261,8 +262,7 @@ module Google
           body
         )
       end
-
-      raise "error fetching free/busy information #{response.status} (#{response.status_code})\n#{response.body}" unless response.success?
+      Google::Exception.raise_on_failure(response)
 
       Calendar::Availability.parse_json(response.body).value
     end

@@ -148,7 +148,7 @@ module Google
       event_start : Time,
       event_end : Time,
       calendar_id = "primary",
-      attendees : (Array(String) | Tuple(String)) = [] of String,
+      attendees = [] of String,
       all_day = false,
       visibility : Visibility = Visibility::Default,
       extended_properties = nil,
@@ -160,7 +160,7 @@ module Google
         start:      GTime.new(event_start, all_day),
         "end":      GTime.new(event_end, all_day),
         visibility: visibility.to_s.downcase,
-        attendees:  attendees.map { |email| {email: email} },
+        attendees:  attendees.is_a?(Enumerable(String)) ? attendees.map { |email| {email: email} } : attendees,
       }).to_json
 
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
@@ -185,7 +185,7 @@ module Google
       calendar_id = "primary",
       event_start : Time? = nil,
       event_end : Time? = nil,
-      attendees : (Array(String) | Tuple(String) | Nil) = nil,
+      attendees = nil,
       all_day = false,
       visibility : Visibility? = nil,
       extended_properties = nil,
@@ -196,7 +196,11 @@ module Google
       opts = opts.merge({start: GTime.new(event_start, all_day)}) if event_start
       opts = opts.merge({"end": GTime.new(event_end, all_day)}) if event_end
       opts = opts.merge({visibility: visibility.to_s.downcase}) if visibility
-      opts = opts.merge({attendees: attendees.map { |email| {email: email} }}) if attendees
+      if attendees
+        opts = opts.merge({
+          attendees: attendees.is_a?(Enumerable(String)) ? attendees.map { |email| {email: email} } : attendees,
+        })
+      end
       opts = extended_properties(opts, extended_properties) if extended_properties
 
       body = raw_json || opts.to_json

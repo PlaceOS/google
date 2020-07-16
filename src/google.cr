@@ -6,7 +6,6 @@ require "./translate/translate"
 module Google
   GOOGLE_URI = URI.parse("https://www.googleapis.com")
 
-
   class Exception < ::Exception
     property http_status : HTTP::Status
     property http_body : String

@@ -50,14 +50,14 @@ module TranslateHelper
           languages: [
             {
               language: "af",
-              name: "Afrikaans"
+              name:     "Afrikaans",
             },
             {
               language: "sq",
-              name: "Albanian"
-            }
-          ]
-        }
+              name:     "Albanian",
+            },
+          ],
+        },
       }.to_json)
   end
 
@@ -69,13 +69,13 @@ module TranslateHelper
           detections: [
             [
               {
-                language: "es",
+                language:   "es",
                 isReliable: false,
-                confidence: 1
-              }
-            ]
-          ]
-        }
+                confidence: 1,
+              },
+            ],
+          ],
+        },
       }.to_json)
   end
 
@@ -86,12 +86,12 @@ module TranslateHelper
         data: {
           translations: [
             {
-              translatedText: "Where is the bathroom?",
+              translatedText:         "Where is the bathroom?",
               detectedSourceLanguage: "es",
-              model: "nmt"
-            }
-          ]
-        }
+              model:                  "nmt",
+            },
+          ],
+        },
       }.to_json)
   end
 

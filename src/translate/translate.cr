@@ -55,7 +55,7 @@ module Google
 
       json = JSON.parse(response.body)
       json["data"]["languages"].as_a.map do |item|
-        { item["language"].as_s, item["name"].as_s }
+        {item["language"].as_s, item["name"].as_s}
       end.to_h
     end
 

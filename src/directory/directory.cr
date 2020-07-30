@@ -10,8 +10,17 @@ require "./user/user_query"
 
 module Google
   class Directory
-    def initialize(@auth : Google::Auth | Google::FileAuth, @domain : String, @projection : String = "full", @view_type : String = "admin_view", user_agent : String? = nil)
-      @user_agent = user_agent || @auth.user_agent
+    def initialize(auth : Google::Auth | Google::FileAuth | String, @domain : String, @projection : String = "full", @view_type : String = "admin_view", user_agent : String? = nil)
+      @auth = auth
+      # If user agent not provided, then use the auth.user_agent
+      # if a token was passed in directly then use the default agent string
+      agent = user_agent || case auth
+      in Google::Auth, Google::FileAuth
+        auth.user_agent
+      in String
+        Google::Auth::DEFAULT_USER_AGENT
+      end
+      @user_agent = agent
     end
 
     @user_agent : String
@@ -59,8 +68,14 @@ module Google
       User.from_json response.body
     end
 
-    private def get_token
-      @auth.get_token.access_token
+    private def get_token : String
+      auth = @auth
+      case auth
+      in Google::Auth, Google::FileAuth
+        auth.get_token.access_token
+      in String
+        auth
+      end
     end
   end
 end

@@ -17,10 +17,12 @@ module Google
     EXPIRY            = 60.seconds
     TOKENS_CACHE      = {} of String => Token
 
+    DEFAULT_USER_AGENT = "Google on Crystal"
+
     @scopes : String
     property user_agent : String
 
-    def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = "Google on Crystal")
+    def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = DEFAULT_USER_AGENT)
       @scopes = scopes.is_a?(Array) ? scopes.join(", ") : scopes
     end
 

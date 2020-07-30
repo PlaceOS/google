@@ -49,7 +49,9 @@ Currently supports following:
 require "google"
 ```
 
-### Auth comes in two flavors
+### Auth
+
+There are three authentication options
 
 #### Google::Auth
 
@@ -62,6 +64,20 @@ Google::Auth.new(issuer: "test@example.com", signing_key: PRIVATE_KEY, scopes: "
 ```crystal
 Google::FileAuth.new(file_path = "/absolute_path/client_auth.json", scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com")
 ```
+
+#### Access token
+
+```crystal
+"pre-generated-google-access-token"
+```
+
+For instance 3-legged OAuth2 where a user token has been provided.
+i.e.
+
+* https://developers.google.com/identity/protocols/oauth2/web-server#offline
+* https://stackoverflow.com/questions/8942340/get-refresh-token-google-api
+
+
 
 ### Directory
 

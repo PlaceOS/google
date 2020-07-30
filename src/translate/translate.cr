@@ -14,8 +14,17 @@ module Google
 
     TRANSLATE_URI = URI.parse("https://translate.googleapis.com")
 
-    def initialize(@auth : Google::Auth | Google::FileAuth, user_agent : String? = nil)
-      @user_agent = user_agent || @auth.user_agent
+    def initialize(auth : Google::Auth | Google::FileAuth | String, user_agent : String? = nil)
+      @auth = auth
+      # If user agent not provided, then use the auth.user_agent
+      # if a token was passed in directly then use the default agent string
+      agent = user_agent || case auth
+      in Google::Auth, Google::FileAuth
+        auth.user_agent
+      in String
+        Google::Auth::DEFAULT_USER_AGENT
+      end
+      @user_agent = agent
     end
 
     def detect_language(text : String | Array(String))
@@ -59,8 +68,14 @@ module Google
       end.to_h
     end
 
-    private def get_token
-      @auth.get_token.access_token
+    private def get_token : String
+      auth = @auth
+      case auth
+      in Google::Auth, Google::FileAuth
+        auth.get_token.access_token
+      in String
+        auth
+      end
     end
   end
 end

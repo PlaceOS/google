@@ -3,7 +3,7 @@ require "jwt"
 require "uri"
 require "uuid"
 require "../auth/file_auth"
-require "../models/*"
+require "./models/*"
 
 module Google
   class EventTickets

@@ -1,5 +1,5 @@
-require "../spec_helper"
-require "../../src/models/event_ticket_object"
+require "../../spec_helper"
+require "../../../src/passes/models/event_ticket_object"
 
 describe Google::EventTicketObject do
   it "json with minimal params, works!" do

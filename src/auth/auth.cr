@@ -23,7 +23,7 @@ module Google
     property user_agent : String
 
     def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = DEFAULT_USER_AGENT)
-      @scopes = scopes.is_a?(Array) ? scopes.join(", ") : scopes
+      @scopes = scopes.is_a?(Array) ? scopes.join(" ") : scopes
     end
 
     # https://developers.google.com/identity/protocols/OAuth2ServiceAccount

@@ -24,37 +24,37 @@ module Google
       property primary_email : String
 
       @[JSON::Field(key: "isAdmin")]
-      property is_admin : Bool
+      property is_admin : Bool?
 
       @[JSON::Field(key: "isDelegatedAdmin")]
-      property is_delegated_admin : Bool
+      property is_delegated_admin : Bool?
 
       @[JSON::Field(key: "lastLoginTime")]
       property last_login_time : Time?
 
       @[JSON::Field(key: "creationTime")]
-      property creation_time : Time
+      property creation_time : Time?
 
       @[JSON::Field(key: "deletionTime")]
       property deletion_time : Time?
 
       @[JSON::Field(key: "agreedToTerms")]
-      property agreed_to_terms : Bool
+      property agreed_to_terms : Bool?
       property password : String?
 
       @[JSON::Field(key: "hashFunction")]
       property hash_function : String?
-      property suspended : Bool
+      property suspended : Bool?
 
       @[JSON::Field(key: "suspensionReason")]
       property suspension_reason : String?
       property archived : Bool?
 
       @[JSON::Field(key: "changePasswordAtNextLogin")]
-      property change_password_at_next_login : Bool
+      property change_password_at_next_login : Bool?
 
       @[JSON::Field(key: "ipWhitelisted")]
-      property ip_whitelisted : Bool
+      property ip_whitelisted : Bool?
 
       property emails : Array(Email)
       property relations : Array(Relation)?
@@ -85,7 +85,7 @@ module Google
       property org_unit_path : String?
 
       @[JSON::Field(key: "isMailboxSetup")]
-      property is_mailbox_setup : Bool
+      property is_mailbox_setup : Bool?
 
       @[JSON::Field(key: "isEnrolledIn2Sv")]
       property is_enrolled_in_2sv : Bool?
@@ -94,7 +94,7 @@ module Google
       property is_enforced_in_2sv : Bool?
 
       @[JSON::Field(key: "includeInGlobalAddressList")]
-      property include_in_global_address_list : Bool
+      property include_in_global_address_list : Bool?
 
       @[JSON::Field(key: "thumbnailPhotoUrl")]
       property thumbnail_photo_url : String?

@@ -27,6 +27,7 @@ module Google
 
     def initialize(@auth : Google::FileAuth,
                    issuer_id : String,
+                   serial_number : String,
                    @issuer_name,
                    @event_name,
                    @ticket_holder_name,
@@ -39,9 +40,8 @@ module Google
                    @logo_image = nil,
                    @event_image = nil,
                    @venue = nil)
-      id_suffix = UUID.random
-      @ticket_class_id = "#{issuer_id}.#{id_suffix}-class"
-      @ticket_object_id = "#{issuer_id}.#{id_suffix}-object"
+      @ticket_class_id = "#{issuer_id}.#{serial_number}-class"
+      @ticket_object_id = "#{issuer_id}.#{serial_number}-object"
     end
 
     def execute

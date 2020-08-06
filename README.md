@@ -178,6 +178,7 @@ Output is google pay pass url that can be emailed or shared so that user can sav
 
 Google::EventTickets.new(auth: file_auth,
   issuer_id: "YOUR ISSUER ID",
+  serial_number: "Unique identifier for the ticket",
   issuer_name: "ISSUER NAME",
   event_name: "TEST EVENT",
   ticket_holder_name: "John Smith",

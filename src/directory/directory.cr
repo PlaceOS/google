@@ -33,7 +33,7 @@ module Google
         projection: @projection,
         viewType:   @view_type,
       })
-      opts = opts.merge({query: query}) if query
+      opts = opts.merge({query: URI.encode(query)}) if query
       options = opts.map { |key, value| "#{key}=#{value}" }.join("&")
 
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|

@@ -12,7 +12,7 @@ describe Google::EventTickets do
 
     auth = Google::FileAuth.new(file_path: FileAuthHelper.client_auth_file, scopes: "TEST_GOOGLE_API_SCOPE")
 
-    event_tickets = Google::EventTickets.new(auth: auth, issuer_id: "Example ISSUER ID", issuer_name: "Test Org", event_name: "Test Event", ticket_holder_name: "John Smith", location: {lat: 123.009, lon: -121.00001}, origins: ["http://example.com"], qr_code_value: "11221212")
+    event_tickets = Google::EventTickets.new(auth: auth, serial_number: "12345678", issuer_id: "Example ISSUER ID", issuer_name: "Test Org", event_name: "Test Event", ticket_holder_name: "John Smith", location: {lat: 123.009, lon: -121.00001}, origins: ["http://example.com"], qr_code_value: "11221212")
     event_tickets.execute.includes?("https://pay.google.com/gp/v/save/").should be_true
   end
 end

@@ -14,12 +14,16 @@ module Google
       Google::Auth.new(issuer: issuer, signing_key: signing_key, scopes: scopes, user_agent: user_agent, sub: sub).get_token
     end
 
-    private def issuer : String
+    def signing_key : String
+      client_secret["private_key"]
+    end
+
+    def client_email : String
       client_secret["client_email"]
     end
 
-    private def signing_key : String
-      client_secret["private_key"]
+    private def issuer : String
+      client_secret["client_email"]
     end
 
     private def process_auth_file : Hash(String, String)

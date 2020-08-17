@@ -164,6 +164,40 @@ translate.translate("Some text to translate", to: "de")
 translate.translate("Some text to translate", to: "de", from: "en")
 ```
 
+### Pay Passes
+Currently only allows `TicketClass` and `TicketObject` creation
+
+Output is google pay pass url that can be emailed or shared so that user can save in their google pay app
+
+```crystal
+# Current use case is to create meetings as TicketClass and an attendee pass as TicketObject
+# `execute` does this in one swoop and creates TicketClass/TicketObject remotely using google api
+# jwt payload is then encoded/signed and shared as url
+
+# file_auth variable below is an instance of Google::FileAuth
+
+Google::EventTickets.new(auth: file_auth,
+  issuer_id: "YOUR ISSUER ID",
+  serial_number: "Unique identifier for the ticket",
+  issuer_name: "ISSUER NAME",
+  event_name: "TEST EVENT",
+  ticket_holder_name: "John Smith",
+  location: {"lat": 37.424299996, "lon": -122.0925956000001},
+  event_details: {header: "some header", body: "Some other body"},
+  date_time: {start: "2023-04-12T11:20:50.52Z", end: "2023-04-12T16:20:50.52Z"},
+  logo_image: {uri: "https://farm8.staticflickr.com/7340/11177041185_a61a7f2139_o.jpg", description: "Baconrista stadium logo"},
+  event_image: {uri: "http://farm4.staticflickr.com/3738/12440799783_3dc3c20606_b.jpg", description: "Coffee beans"},
+  venue: {name: "JK Stadium", address: "123 FYI Str"},
+  origins: ["http://baconrista.com", "https://baconrista.com"],
+  qr_code_value: "Data encoded in qr_code",
+  qr_code_alternate_text: "User Friendly alternate text"
+).execute
+
+# Result
+"https://pay.google.com/gp/v/u/0/save/ENCODED_SIGNED_JWT_PAYLOAD"
+
+```
+
 ## Development
 
 To run specs `crystal spec`

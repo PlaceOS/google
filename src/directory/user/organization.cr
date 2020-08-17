@@ -5,7 +5,7 @@ module Google
         include JSON::Serializable
 
         property name : String?
-        property title : String
+        property title : String?
         property primary : Bool?
         property type : String?
 

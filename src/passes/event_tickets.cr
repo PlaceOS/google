@@ -25,7 +25,7 @@ module Google
     property event_image : NamedTuple(uri: String?, description: String?)?
     property venue : NamedTuple(name: String?, address: String?)?
 
-    def initialize(@auth : Google::FileAuth,
+    def initialize(auth : Google::Auth | Google::FileAuth | String,
                    issuer_id : String,
                    serial_number : String,
                    @issuer_name,
@@ -39,10 +39,24 @@ module Google
                    @date_time = nil,
                    @logo_image = nil,
                    @event_image = nil,
-                   @venue = nil)
+                   @venue = nil,
+                   user_agent : String? = nil)
       @ticket_class_id = "#{issuer_id}.#{serial_number}-class"
       @ticket_object_id = "#{issuer_id}.#{serial_number}-object"
+
+      @auth = auth
+      # If user agent not provided, then use the auth.user_agent
+      # if a token was passed in directly then use the default agent string
+      agent = user_agent || case auth
+      in Google::Auth, Google::FileAuth
+        auth.user_agent
+      in String
+        Google::Auth::DEFAULT_USER_AGENT
+      end
+      @user_agent = agent
     end
+
+    @user_agent : String
 
     def execute
       create_class
@@ -59,6 +73,7 @@ module Google
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",
+            "User-Agent"    => @user_agent,
           },
           body
         )
@@ -75,6 +90,7 @@ module Google
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",
+            "User-Agent"    => @user_agent,
           },
           body
         )
@@ -124,8 +140,14 @@ module Google
       }
     end
 
-    private def get_token
-      auth.get_token.access_token
+    private def get_token : String
+      auth = @auth
+      case auth
+      in Google::Auth, Google::FileAuth
+        auth.get_token.access_token
+      in String
+        auth
+      end
     end
 
     private def generate_pass_jwt

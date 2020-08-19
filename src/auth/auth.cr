@@ -20,10 +20,16 @@ module Google
     DEFAULT_USER_AGENT = "Google on Crystal"
 
     @scopes : String
+    property signing_key : String
     property user_agent : String
+    property issuer : String
 
     def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = DEFAULT_USER_AGENT)
       @scopes = scopes.is_a?(Array) ? scopes.join(" ") : scopes
+    end
+
+    def client_email : String
+      @issuer
     end
 
     # https://developers.google.com/identity/protocols/OAuth2ServiceAccount

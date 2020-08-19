@@ -11,7 +11,7 @@ module Google
 
     property ticket_class_id : String
     property ticket_object_id : String
-    property auth : Google::FileAuth
+    property auth : Google::Auth | Google::FileAuth
     property issuer_name : String
     property event_name : String
     property ticket_holder_name : String
@@ -25,7 +25,7 @@ module Google
     property event_image : NamedTuple(uri: String?, description: String?)?
     property venue : NamedTuple(name: String?, address: String?)?
 
-    def initialize(auth : Google::Auth | Google::FileAuth | String,
+    def initialize(@auth : Google::Auth | Google::FileAuth,
                    issuer_id : String,
                    serial_number : String,
                    @issuer_name,
@@ -44,16 +44,8 @@ module Google
       @ticket_class_id = "#{issuer_id}.#{serial_number}-class"
       @ticket_object_id = "#{issuer_id}.#{serial_number}-object"
 
-      @auth = auth
       # If user agent not provided, then use the auth.user_agent
-      # if a token was passed in directly then use the default agent string
-      agent = user_agent || case auth
-      in Google::Auth, Google::FileAuth
-        auth.user_agent
-      in String
-        Google::Auth::DEFAULT_USER_AGENT
-      end
-      @user_agent = agent
+      @user_agent = user_agent || auth.user_agent
     end
 
     @user_agent : String
@@ -125,7 +117,7 @@ module Google
 
     private def pass_jwt_body
       {
-        "iss":     auth.client_email,
+        "iss":     auth.issuer,
         "aud":     "google",
         "typ":     "savetoandroidpay",
         "iat":     Time.utc.to_unix,
@@ -141,13 +133,7 @@ module Google
     end
 
     private def get_token : String
-      auth = @auth
-      case auth
-      in Google::Auth, Google::FileAuth
-        auth.get_token.access_token
-      in String
-        auth
-      end
+      auth.get_token.access_token
     end
 
     private def generate_pass_jwt

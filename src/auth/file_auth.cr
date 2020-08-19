@@ -22,7 +22,7 @@ module Google
       client_secret["client_email"]
     end
 
-    private def issuer : String
+    def issuer : String
       client_secret["client_email"]
     end
 

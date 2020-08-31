@@ -143,22 +143,22 @@ module CalendarHelper
   end
 
   def mock_event_create
-    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&supportsAttachments=true")
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/primary/events?conferenceDataVersion=1&supportsAttachments=true&sendUpdates=all")
       .to_return(body: event_response.to_json)
   end
 
   def mock_event_update
-    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?supportsAttachments=true&sendUpdates=None")
+    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?supportsAttachments=true&sendUpdates=externalOnly")
       .to_return(body: event_response.to_json)
   end
 
   def mock_event_delete
-    WebMock.stub(:delete, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=none&sendNotifications=false")
+    WebMock.stub(:delete, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=externalOnly&sendNotifications=false")
       .to_return(body: {"kind": "calendar#calendarDelete"}.to_json)
   end
 
   def mock_event_move
-    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/original_calendar_id/events/event_id/move?destination=destination_calendar_id&sendUpdates=None")
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/original_calendar_id/events/event_id/move?destination=destination_calendar_id&sendUpdates=externalOnly")
       .to_return(body: event_response.to_json)
   end
 

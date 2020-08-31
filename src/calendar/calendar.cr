@@ -25,6 +25,10 @@ module Google
     All
     ExternalOnly
     None
+
+    def to_s
+      super.camelcase(lower: true)
+    end
   end
 
   enum Visibility
@@ -129,7 +133,7 @@ module Google
       Calendar::Event.from_json response.body
     end
 
-    def delete(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::None)
+    def delete(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::ExternalOnly)
       # convert ExternalOnly to externalOnly
       send_notifications = notify.all?
       update_guests = notify.to_s.camelcase(lower: true)
@@ -161,6 +165,7 @@ module Google
       all_day = false,
       visibility : Visibility = Visibility::Default,
       extended_properties = nil,
+      notify : UpdateGuests = UpdateGuests::All,
       **opts
     )
       opts = extended_properties(opts, extended_properties) if extended_properties
@@ -175,7 +180,7 @@ module Google
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(
           "POST",
-          "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=1",
+          "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=1&sendUpdates=#{notify}",
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",
@@ -198,7 +203,7 @@ module Google
       all_day = false,
       visibility : Visibility? = nil,
       extended_properties = nil,
-      notify : UpdateGuests = UpdateGuests::None,
+      notify : UpdateGuests = UpdateGuests::ExternalOnly,
       raw_json : String? = nil,
       **opts
     )
@@ -236,7 +241,7 @@ module Google
       event_id : String,
       calendar_id : String,
       destination_id : String,
-      notify : UpdateGuests = UpdateGuests::None
+      notify : UpdateGuests = UpdateGuests::ExternalOnly
     )
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(

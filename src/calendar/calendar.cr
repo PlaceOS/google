@@ -172,11 +172,11 @@ module Google
       opts = extended_properties(opts, extended_properties) if extended_properties
 
       body = opts.merge({
-        start:      GTime.new(event_start, all_day),
-        "end":      GTime.new(event_end, all_day),
-        visibility: visibility.to_s.downcase,
-        attendees:  attendees.is_a?(Enumerable(String)) ? attendees.map { |email| {email: email} } : attendees,
-        conferenceData: conference
+        start:          GTime.new(event_start, all_day),
+        "end":          GTime.new(event_end, all_day),
+        visibility:     visibility.to_s.downcase,
+        attendees:      attendees.is_a?(Enumerable(String)) ? attendees.map { |email| {email: email} } : attendees,
+        conferenceData: conference,
       }).to_json
 
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|

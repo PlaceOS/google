@@ -166,6 +166,7 @@ module Google
       visibility : Visibility = Visibility::Default,
       extended_properties = nil,
       notify : UpdateGuests = UpdateGuests::All,
+      conference = nil,
       **opts
     )
       opts = extended_properties(opts, extended_properties) if extended_properties
@@ -175,12 +176,13 @@ module Google
         "end":      GTime.new(event_end, all_day),
         visibility: visibility.to_s.downcase,
         attendees:  attendees.is_a?(Enumerable(String)) ? attendees.map { |email| {email: email} } : attendees,
+        conferenceData: conference
       }).to_json
 
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(
           "POST",
-          "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=1&sendUpdates=#{notify}",
+          "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",
@@ -204,12 +206,14 @@ module Google
       visibility : Visibility? = nil,
       extended_properties = nil,
       notify : UpdateGuests = UpdateGuests::ExternalOnly,
+      conference = nil,
       raw_json : String? = nil,
       **opts
     )
       opts = opts.merge({start: GTime.new(event_start, all_day)}) if event_start
       opts = opts.merge({"end": GTime.new(event_end, all_day)}) if event_end
       opts = opts.merge({visibility: visibility.to_s.downcase}) if visibility
+      opts = opts.merge({conferenceData: conference}) if conference
       if attendees
         opts = opts.merge({
           attendees: attendees.is_a?(Enumerable(String)) ? attendees.map { |email| {email: email} } : attendees,
@@ -222,7 +226,7 @@ module Google
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(
           "PATCH",
-          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?supportsAttachments=true&sendUpdates=#{notify}",
+          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",
           HTTP::Headers{
             "Authorization" => "Bearer #{get_token}",
             "Content-Type"  => "application/json",

@@ -133,7 +133,7 @@ module Google
       Calendar::Event.from_json response.body
     end
 
-    def delete(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::ExternalOnly)
+    def delete(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All)
       # convert ExternalOnly to externalOnly
       send_notifications = notify.all?
       update_guests = notify.to_s.camelcase(lower: true)
@@ -205,7 +205,7 @@ module Google
       all_day = false,
       visibility : Visibility? = nil,
       extended_properties = nil,
-      notify : UpdateGuests = UpdateGuests::ExternalOnly,
+      notify : UpdateGuests = UpdateGuests::All,
       conference = nil,
       raw_json : String? = nil,
       **opts
@@ -245,7 +245,7 @@ module Google
       event_id : String,
       calendar_id : String,
       destination_id : String,
-      notify : UpdateGuests = UpdateGuests::ExternalOnly
+      notify : UpdateGuests = UpdateGuests::All
     )
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
         client.exec(

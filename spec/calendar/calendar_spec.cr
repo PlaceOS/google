@@ -148,17 +148,17 @@ module CalendarHelper
   end
 
   def mock_event_update
-    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?supportsAttachments=true&conferenceDataVersion=0&sendUpdates=externalOnly")
+    WebMock.stub(:patch, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?supportsAttachments=true&conferenceDataVersion=0&sendUpdates=all")
       .to_return(body: event_response.to_json)
   end
 
   def mock_event_delete
-    WebMock.stub(:delete, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=externalOnly&sendNotifications=false")
+    WebMock.stub(:delete, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789?sendUpdates=all&sendNotifications=true")
       .to_return(body: {"kind": "calendar#calendarDelete"}.to_json)
   end
 
   def mock_event_move
-    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/original_calendar_id/events/event_id/move?destination=destination_calendar_id&sendUpdates=externalOnly")
+    WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/original_calendar_id/events/event_id/move?destination=destination_calendar_id&sendUpdates=all")
       .to_return(body: event_response.to_json)
   end
 

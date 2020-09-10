@@ -88,7 +88,7 @@ describe Google::Calendar do
             "User-Agent"    => "Switch",
             "Content-Type"  => "multipart/mixed; boundary=--------------------------c2KH8mGV_l_gxMQ7c8wngsrk",
           }
-        ).to_return(body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{{
+        ).to_return(body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <response-1@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{{
                                                                                                                                                                                                                    "kind":          "calendar#calendarList",
                                                                                                                                                                                                                    "etag":          "12121",
                                                                                                                                                                                                                    "nextSyncToken": "TOKEN123",
@@ -104,7 +104,7 @@ describe Google::Calendar do
                                                                                                                                                                                                                      "primary":  true,
                                                                                                                                                                                                                      "deleted":  false,
                                                                                                                                                                                                                    }],
-                                                                                                                                                                                                                 }.to_json}\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{CalendarHelper.events_response.to_json}\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--")
+                                                                                                                                                                                                                 }.to_json}\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <response-0@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{CalendarHelper.events_response.to_json}\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--")
 
       calendar = CalendarHelper.calendar
       request1 = calendar.events_request(period_start: Time.utc(2016, 2, 15, 10, 20, 30))

@@ -41,7 +41,8 @@ module Google
         end
 
         MIME::Multipart.parse(batch_response.body_io? || IO::Memory.new(batch_response.body), boundary) do |headers, io|
-          id = headers["Content-ID"].split("@")[0][1..-1].to_i
+          # replies to <0@place.tech> with <response-0@place.tech>
+          id = headers["Content-ID"].split("@")[0][10..-1].to_i
           response = HTTP::Client::Response.from_io(io)
           responses[requests_slice[id]] = response
         end

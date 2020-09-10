@@ -53,42 +53,58 @@ module Google
 
     @user_agent : String
 
-    def calendar_list : Array(Calendar::ListEntry)
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec("GET", "/calendar/v3/users/me/calendarList", HTTP::Headers{
-          "Authorization" => "Bearer #{get_token}",
-          "User-Agent"    => @user_agent,
-        })
-      end
-      Google::Exception.raise_on_failure(response)
+    def calendar_list_request : HTTP::Request
+      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList", HTTP::Headers{
+        "Authorization" => "Bearer #{get_token}",
+        "User-Agent"    => @user_agent,
+      })
+    end
 
+    def calendar_list(response : HTTP::Client::Response) : Array(Calendar::ListEntry)
+      Google::Exception.raise_on_failure(response)
       results = Calendar::List.from_json response.body
       results.items
     end
 
+    def calendar_list : Array(Calendar::ListEntry)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(calendar_list_request)
+      end
+      calendar_list(response)
+    end
+
     # example additional options: showDeleted
-    def events(calendar_id = "primary", period_start : Time = Time.local.at_beginning_of_day, period_end : Time? = nil, updated_since : Time? = nil, **opts)
+    def events_request(calendar_id = "primary", period_start : Time = Time.local.at_beginning_of_day, period_end : Time? = nil, updated_since : Time? = nil, **opts) : HTTP::Request
       other_options = opts.empty? ? nil : events_other_options(opts)
       updated = updated_since ? "&updatedMin=#{updated_since.to_rfc3339}" : nil
       pend = period_end ? "&timeMax=#{period_end.to_rfc3339}" : nil
 
       request_uri = "/calendar/v3/calendars/#{calendar_id}/events?maxResults=2500&singleEvents=true&timeMin=#{period_start.to_rfc3339}#{pend}#{updated}#{other_options}"
 
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(
-          "GET",
-          request_uri,
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "User-Agent"    => @user_agent,
-          }
-        )
-      end
-      Google::Exception.raise_on_failure(response)
+      HTTP::Request.new(
+        "GET",
+        request_uri,
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "User-Agent"    => @user_agent,
+        }
+      )
+    end
 
-      results = Calendar::Events.from_json response.body
+    def events(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
+      Calendar::Events.from_json response.body
+    end
+
+    def events(*args, **opts)
+      request = events_request(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(request)
+      end
+      results = events(response)
 
       # Return all the pages, nextPageToken will be nil when there are no more
+      request_uri = request.resource
       next_page = results.next_page_token
       loop do
         break unless next_page
@@ -115,49 +131,60 @@ module Google
       results
     end
 
-    def event(event_id, calendar_id = "primary")
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(
-          "GET",
-          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}",
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "User-Agent"    => @user_agent,
-          }
-        )
-      end
+    def event_request(event_id, calendar_id = "primary")
+      HTTP::Request.new(
+        "GET",
+        "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "User-Agent"    => @user_agent,
+        }
+      )
+    end
 
+    def event(response : HTTP::Client::Response)
       return nil if {HTTP::Status::GONE, HTTP::Status::NOT_FOUND}.includes?(response.status)
       Google::Exception.raise_on_failure(response)
-
       Calendar::Event.from_json response.body
     end
 
-    def delete(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All)
+    def event(event_id, calendar_id = "primary")
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(event_request(event_id, calendar_id))
+      end
+      event response
+    end
+
+    def delete_request(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All)
       # convert ExternalOnly to externalOnly
       send_notifications = notify.all?
       update_guests = notify.to_s.camelcase(lower: true)
 
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec("DELETE",
-          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?sendUpdates=#{update_guests}&sendNotifications=#{send_notifications}",
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "User-Agent"    => @user_agent,
-          }
-        )
-      end
+      HTTP::Request.new(
+        "DELETE",
+        "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?sendUpdates=#{update_guests}&sendNotifications=#{send_notifications}",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "User-Agent"    => @user_agent,
+        }
+      )
+    end
 
+    def delete(response : HTTP::Client::Response)
       # Not an error if the booking doesn't exist
       return true if {HTTP::Status::GONE, HTTP::Status::NOT_FOUND}.includes?(response.status)
       Google::Exception.raise_on_failure(response)
-
       true
     end
 
-    # Create an event
-    # Supports: summary, description, location
-    def create(
+    def delete(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(delete_request(*args, **opts))
+      end
+      delete(response)
+    end
+
+    def create_request(
       event_start : Time,
       event_end : Time,
       calendar_id = "primary",
@@ -179,24 +206,33 @@ module Google
         conferenceData: conference,
       }).to_json
 
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(
-          "POST",
-          "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "Content-Type"  => "application/json",
-            "User-Agent"    => @user_agent,
-          },
-          body
-        )
-      end
-      Google::Exception.raise_on_failure(response)
+      HTTP::Request.new(
+        "POST",
+        "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "Content-Type"  => "application/json",
+          "User-Agent"    => @user_agent,
+        },
+        body
+      )
+    end
 
+    def create(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
       Calendar::Event.from_json response.body
     end
 
-    def update(
+    # Create an event
+    # Supports: summary, description, location
+    def create(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(create_request(*args, **opts))
+      end
+      create(response)
+    end
+
+    def update_request(
       event_id,
       calendar_id = "primary",
       event_start : Time? = nil,
@@ -223,43 +259,55 @@ module Google
 
       body = raw_json || opts.to_json
 
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(
-          "PATCH",
-          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "Content-Type"  => "application/json",
-            "User-Agent"    => @user_agent,
-          },
-          body
-        )
-      end
-      Google::Exception.raise_on_failure(response)
-
-      Calendar::Event.from_json response.body
+      HTTP::Request.new(
+        "PATCH",
+        "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "Content-Type"  => "application/json",
+          "User-Agent"    => @user_agent,
+        },
+        body
+      )
     end
 
-    # Move an event to another calendar
-    def move(
+    def update(response : HTTP::Client::Response)
+      create(response)
+    end
+
+    def update(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(update_request(*args, **opts))
+      end
+      update(response)
+    end
+
+    def move_request(
       event_id : String,
       calendar_id : String,
       destination_id : String,
       notify : UpdateGuests = UpdateGuests::All
     )
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(
-          "POST",
-          "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}/move?destination=#{destination_id}&sendUpdates=#{notify}",
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "User-Agent"    => @user_agent,
-          }
-        )
-      end
-      Google::Exception.raise_on_failure(response)
+      HTTP::Request.new(
+        "POST",
+        "/calendar/v3/calendars/#{calendar_id}/events/#{event_id}/move?destination=#{destination_id}&sendUpdates=#{notify}",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "User-Agent"    => @user_agent,
+        }
+      )
+    end
 
-      Calendar::Event.from_json response.body
+    def move(response : HTTP::Client::Response)
+      create(response)
+    end
+
+    # Move an event to another calendar
+    def move(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(move_request(*args, **opts))
+      end
+      move(response)
     end
 
     # Find availability (free/busy) for calendars

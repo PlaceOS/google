@@ -75,6 +75,48 @@ describe Google::Calendar do
       availability_list.first.is_a?(Google::Calendar::CalendarAvailability).should eq(true)
     end
   end
+
+  describe "#batch" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+
+      WebMock.stub(:post, "https://www.googleapis.com/batch/calendar/v3")
+        .with(
+          body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nGET /calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2016-02-15T10:20:30Z HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nGET /calendar/v3/users/me/calendarList HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--",
+          headers: {
+            "Authorization" => "Bearer test_token",
+            "User-Agent"    => "Switch",
+            "Content-Type"  => "multipart/mixed; boundary=--------------------------c2KH8mGV_l_gxMQ7c8wngsrk",
+          }
+        ).to_return(body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{{
+                                                                                                                                                                                                                   "kind":          "calendar#calendarList",
+                                                                                                                                                                                                                   "etag":          "12121",
+                                                                                                                                                                                                                   "nextSyncToken": "TOKEN123",
+                                                                                                                                                                                                                   "items":         [{
+                                                                                                                                                                                                                     "kind":            "hi",
+                                                                                                                                                                                                                     "etag":            "12121",
+                                                                                                                                                                                                                     "id":              "123456789",
+                                                                                                                                                                                                                     "summary":         "example summary",
+                                                                                                                                                                                                                     "summaryOverride": "override",
+
+                                                                                                                                                                                                                     "hidden":   false,
+                                                                                                                                                                                                                     "selected": true,
+                                                                                                                                                                                                                     "primary":  true,
+                                                                                                                                                                                                                     "deleted":  false,
+                                                                                                                                                                                                                   }],
+                                                                                                                                                                                                                 }.to_json}\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{CalendarHelper.events_response.to_json}\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--")
+
+      calendar = CalendarHelper.calendar
+      request1 = calendar.events_request(period_start: Time.utc(2016, 2, 15, 10, 20, 30))
+      request2 = calendar.calendar_list_request
+      results = calendar.batch({request1, request2}, "--------------------------c2KH8mGV_l_gxMQ7c8wngsrk")
+
+      cals = calendar.calendar_list(results[request2])
+      cals.first.summary.should eq("override")
+
+      calendar.events(results[request1]).is_a?(Google::Calendar::Events).should eq(true)
+    end
+  end
 end
 
 module CalendarHelper

@@ -1,4 +1,5 @@
 require "./calendar/calendar"
+require "./calendar/batch_request"
 require "./directory/directory"
 require "./files/files"
 require "./translate/translate"

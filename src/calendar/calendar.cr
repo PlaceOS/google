@@ -78,9 +78,9 @@ module Google
       results.items
     end
 
-    def calendar_list : Array(Calendar::ListEntry)
+    def calendar_list(min_access : Access? = nil) : Array(Calendar::ListEntry)
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(calendar_list_request)
+        client.exec(calendar_list_request(min_access))
       end
       calendar_list(response)
     end

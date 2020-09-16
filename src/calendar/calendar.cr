@@ -37,6 +37,17 @@ module Google
     Private
   end
 
+  enum Access
+    FreeBusyReader
+    Owner
+    Reader
+    Writer
+
+    def to_s
+      super.camelcase(lower: true)
+    end
+  end
+
   class Calendar
     def initialize(auth : Google::Auth | Google::FileAuth | String, user_agent : String? = nil)
       @auth = auth
@@ -53,8 +64,9 @@ module Google
 
     @user_agent : String
 
-    def calendar_list_request : HTTP::Request
-      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList", HTTP::Headers{
+    def calendar_list_request(min_access : Access? = nil) : HTTP::Request
+      min_access = "?minAccessRole=#{min_access}" if min_access
+      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList#{min_access}", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
         "User-Agent"    => @user_agent,
       })

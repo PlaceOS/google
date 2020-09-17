@@ -22,6 +22,17 @@ describe Google::Directory do
       received.should eq(expected)
     end
   end
+
+  describe "#groups" do
+    it "works in case of successful api call" do
+      DirectoryHelper.mock_token
+      DirectoryHelper.mock_group_query
+
+      expected = Google::Directory::GroupQuery.from_json(DirectoryHelper.group_query_response.to_json).to_json
+      received = DirectoryHelper.directory.groups("steve@place.org").to_json
+      received.should eq(expected)
+    end
+  end
 end
 
 module DirectoryHelper
@@ -76,6 +87,30 @@ module DirectoryHelper
         },
       ],
     }
+  end
+
+  def group_lookup_response
+    {
+      "kind":               "admin#directory#group",
+      "id":                 "string",
+      "etag":               "etag",
+      "email":              "string@domain",
+      "name":               "string",
+      "directMembersCount": 12,
+      "description":        "string",
+    }
+  end
+
+  def group_query_response
+    {
+      "kind":   "admin#directory#groups",
+      "groups": [group_lookup_response],
+    }
+  end
+
+  def mock_group_query
+    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/groups/?userKey=steve@place.org")
+      .to_return(body: group_query_response.to_json)
   end
 
   def auth

@@ -1,18 +1,20 @@
-require "./user"
+require "./group"
 
 module Google
   class Directory
-    class UserQuery
+    class GroupQuery
       include JSON::Serializable
 
       property kind : String
-      property users : Array(User)?
+      property etag : String?
+
+      property groups : Array(Group)?
 
       @[JSON::Field(key: "nextPageToken")]
       property next_page_token : String?
 
-      def users : Array(User)
-        @users || [] of User
+      def groups : Array(Group)
+        @groups || [] of Group
       end
     end
   end

@@ -17,7 +17,7 @@ module Google
 
     def self.raise_on_failure(response)
       unless response.success?
-        raise new(response.status, response.body, response.status.description)
+        raise new(response.status, response.body, "#{response.status.description}\n#{response.body}")
       end
     end
   end

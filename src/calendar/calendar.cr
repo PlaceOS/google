@@ -323,30 +323,39 @@ module Google
     end
 
     # Find availability (free/busy) for calendars
-    def availability(mailboxes : Array(String), starts_at : Time, ends_at : Time)
+    def availability_request(mailboxes : Array(String), starts_at : Time, ends_at : Time)
       time_min = GTime.new(starts_at)
       items = mailboxes.map { |mailbox| {"id" => mailbox} }
       body = {
-        "timeMin"  => time_min.date_time,
-        "timeMax"  => GTime.new(ends_at).date_time,
-        "timeZone" => time_min.time_zone,
-        "items"    => items,
+        "timeMin"              => time_min.date_time,
+        "timeMax"              => GTime.new(ends_at).date_time,
+        "timeZone"             => time_min.time_zone,
+        "items"                => items,
+        "calendarExpansionMax" => 50,
       }.to_json
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(
-          "POST",
-          "/calendar/v3/freeBusy",
-          HTTP::Headers{
-            "Authorization" => "Bearer #{get_token}",
-            "Content-Type"  => "application/json",
-            "User-Agent"    => @user_agent,
-          },
-          body
-        )
-      end
-      Google::Exception.raise_on_failure(response)
 
+      HTTP::Request.new(
+        "POST",
+        "/calendar/v3/freeBusy",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "Content-Type"  => "application/json",
+          "User-Agent"    => @user_agent,
+        },
+        body
+      )
+    end
+
+    def availability(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
       Calendar::Availability.parse_json(response.body).value
+    end
+
+    def availability(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(availability_request(*args, **opts))
+      end
+      availability(response)
     end
 
     private def events_other_options(opts) : String

@@ -16,8 +16,9 @@ module Google
 
       property calendar : String
       property availability : Array(AvailabilityStatus)
+      property error : String?
 
-      def initialize(@calendar, @availability)
+      def initialize(@calendar, @availability, @error = nil)
       end
     end
 
@@ -32,12 +33,18 @@ module Google
       def self.parse_json(data)
         result = [] of CalendarAvailability
         JSON.parse(data)["calendars"].as_h.each do |calendar, busy_data|
-          availability = busy_data["busy"].as_a.map do |fb|
-            AvailabilityStatus.new(status: "busy",
-              starts_at: GTime.new(Time.parse_rfc3339(fb["start"].as_s)),
-              ends_at: GTime.new(Time.parse_rfc3339(fb["end"].as_s)))
+          if errors = busy_data["errors"]?
+            availability = [] of AvailabilityStatus
+            error = errors[0]["reason"].as_s
+          else
+            error = nil
+            availability = busy_data["busy"].as_a.map do |fb|
+              AvailabilityStatus.new(status: "busy",
+                starts_at: GTime.new(Time.parse_rfc3339(fb["start"].as_s)),
+                ends_at: GTime.new(Time.parse_rfc3339(fb["end"].as_s)))
+            end
           end
-          result << CalendarAvailability.new(calendar: calendar, availability: availability)
+          result << CalendarAvailability.new(calendar: calendar, availability: availability, error: error)
         end
         Calendar::Availability.new(value: result)
       end

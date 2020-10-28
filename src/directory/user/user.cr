@@ -106,7 +106,7 @@ module Google
       property recovery_phone : String?
 
       @[JSON::Field(key: "customSchemas")]
-      property custom_schemas : Hash(String, Hash(String, String))?
+      property custom_schemas : Hash(String, Hash(String, JSON::Any))?
     end
   end
 end

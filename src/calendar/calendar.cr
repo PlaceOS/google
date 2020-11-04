@@ -65,8 +65,8 @@ module Google
     @user_agent : String
 
     def calendar_list_request(min_access : Access? = nil) : HTTP::Request
-      min_access = "?minAccessRole=#{min_access}" if min_access
-      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList#{min_access}", HTTP::Headers{
+      min_access = "&minAccessRole=#{min_access}" if min_access
+      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList?maxResults=250&showHidden=true#{min_access}", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
         "User-Agent"    => @user_agent,
       })

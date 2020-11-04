@@ -82,7 +82,7 @@ describe Google::Calendar do
 
       WebMock.stub(:post, "https://www.googleapis.com/batch/calendar/v3")
         .with(
-          body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nGET /calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2016-02-15T10:20:30Z HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nGET /calendar/v3/users/me/calendarList HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--",
+          body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nGET /calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2016-02-15T10:20:30Z HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nGET /calendar/v3/users/me/calendarList?maxResults=250&showHidden=true HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--",
           headers: {
             "Authorization" => "Bearer test_token",
             "User-Agent"    => "Switch",
@@ -128,7 +128,7 @@ module CalendarHelper
   end
 
   def mock_calendar_list
-    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/users/me/calendarList")
+    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=250&showHidden=true")
       .to_return(body: {
         "kind":          "calendar#calendarList",
         "etag":          "12121",

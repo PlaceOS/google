@@ -131,11 +131,9 @@ module Google
             }
           )
         end
-        Google::Exception.raise_on_failure(response)
-
-        next_results = Calendar::Events.from_json response.body
 
         # Append the results
+        next_results = events(response)
         results.items.concat(next_results.items)
         next_page = next_results.next_page_token
       end

@@ -8,14 +8,10 @@ module Google
       property kind : String
       property etag : String?
 
-      property groups : Array(Group)?
+      property groups : Array(Group) { [] of Group }
 
       @[JSON::Field(key: "nextPageToken")]
       property next_page_token : String?
-
-      def groups : Array(Group)
-        @groups || [] of Group
-      end
     end
   end
 end

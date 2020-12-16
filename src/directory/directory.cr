@@ -5,6 +5,7 @@ require "uri"
 require "../auth/auth"
 require "../auth/file_auth"
 require "./location"
+require "./member"
 require "./user/*"
 require "./group/*"
 
@@ -48,10 +49,7 @@ module Google
     end
 
     def users(query = nil, limit = 500, **opts)
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(users_request(query, limit, **opts))
-      end
-      users(response)
+      users perform(users_request(query, limit, **opts))
     end
 
     # https://developers.google.com/admin-sdk/directory/v1/reference/users/get
@@ -72,10 +70,7 @@ module Google
     end
 
     def lookup(user_id)
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(lookup_request(user_id))
-      end
-      lookup(response)
+      lookup perform(lookup_request(user_id))
     end
 
     # https://developers.google.com/admin-sdk/directory/v1/reference/groups/list
@@ -85,7 +80,7 @@ module Google
 
       HTTP::Request.new(
         "GET",
-        "/admin/directory/v1/groups/?#{options}",
+        "/admin/directory/v1/groups/?maxResults=200&#{options}",
         HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "User-Agent"    => @user_agent,
@@ -99,10 +94,63 @@ module Google
     end
 
     def groups(user_id = nil, **opts)
-      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(groups_request(user_id, **opts))
+      groups perform(groups_request(user_id, **opts))
+    end
+
+    enum Role
+      OWNER
+      MANAGER
+      MEMBER
+    end
+
+    # https://developers.google.com/admin-sdk/directory/reference/rest/v1/members/list
+    def members_request(group_id : String, include_indirect : Bool = true, role : Role? = nil)
+      options = "includeDerivedMembership=#{include_indirect}&maxResults=200"
+      options += "roles=#{role.to_s}" if role
+
+      HTTP::Request.new(
+        "GET",
+        "/admin/directory/v1/groups/#{group_id}/members?#{options}",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "User-Agent"    => @user_agent,
+        }
+      )
+    end
+
+    def members(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
+      MemberQuery.from_json response.body
+    end
+
+    def members(group_id : String, include_indirect : Bool = true, role : Role? = nil)
+      request = members_request(group_id, include_indirect, role)
+      results = members(perform(request))
+
+      request_uri = request.resource
+      next_page = results.next_page_token
+
+      loop do
+        break unless next_page
+
+        response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+          client.exec(
+            "GET",
+            "#{request_uri}&pageToken=#{next_page}",
+            HTTP::Headers{
+              "Authorization" => "Bearer #{get_token}",
+              "User-Agent"    => @user_agent,
+            }
+          )
+        end
+
+        # Append the results
+        next_results = members(response)
+        results.members.concat(next_results.members)
+        next_page = next_results.next_page_token
       end
-      groups(response)
+
+      results
     end
 
     private def get_token : String
@@ -112,6 +160,12 @@ module Google
         auth.get_token.access_token
       in String
         auth
+      end
+    end
+
+    private def perform(request)
+      ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(request)
       end
     end
   end

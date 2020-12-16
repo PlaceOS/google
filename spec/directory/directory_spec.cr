@@ -33,6 +33,17 @@ describe Google::Directory do
       received.should eq(expected)
     end
   end
+
+  describe "#members" do
+    it "works in case of successful api call" do
+      DirectoryHelper.mock_token
+      DirectoryHelper.mock_members_query
+
+      expected = Google::Directory::MemberQuery.from_json(DirectoryHelper.member_query_response.to_json).to_json
+      received = DirectoryHelper.directory.members("group@place.org").to_json
+      received.should eq(expected)
+    end
+  end
 end
 
 module DirectoryHelper
@@ -109,8 +120,32 @@ module DirectoryHelper
   end
 
   def mock_group_query
-    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/groups/?userKey=steve@place.org")
+    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/groups/?maxResults=200&userKey=steve@place.org")
       .to_return(body: group_query_response.to_json)
+  end
+
+  def member_lookup_response
+    {
+      "kind":   "admin#directory#member",
+      "id":     "string",
+      "etag":   "etag",
+      "email":  "string@domain",
+      "role":   "string",
+      "type":   "string",
+      "status": "string",
+    }
+  end
+
+  def member_query_response
+    {
+      "kind":    "admin#directory#members",
+      "members": [member_lookup_response],
+    }
+  end
+
+  def mock_members_query
+    WebMock.stub(:get, "https://www.googleapis.com/admin/directory/v1/groups/group@place.org/members?includeDerivedMembership=true&maxResults=200")
+      .to_return(body: member_query_response.to_json)
   end
 
   def auth

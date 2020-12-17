@@ -8,7 +8,7 @@ module Google
       property etag : String?
 
       property email : String
-      property name : String?
+      property name : String
       property description : String?
 
       @[JSON::Field(key: "directMembersCount")]

@@ -356,9 +356,9 @@ module Google
       availability(response)
     end
 
-    private def events_other_options(opts) : String
-      opts_string = opts.map { |key, value| "#{key}=#{value}" }.join("&")
-      "&#{opts_string}"
+    private def events_other_options(opts) : String?
+      opts_string = opts.map { |key, value| "#{key}=#{value}" unless value.nil? }.compact.join("&")
+      "&#{opts_string}" unless opts_string.empty?
     end
 
     private def get_token : String

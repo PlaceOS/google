@@ -4,6 +4,7 @@ require "./directory/directory"
 require "./files/files"
 require "./translate/translate"
 require "./passes/event_tickets"
+require "./gmail/messages"
 
 module Google
   GOOGLE_URI = URI.parse("https://www.googleapis.com")

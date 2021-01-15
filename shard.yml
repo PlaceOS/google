@@ -1,5 +1,5 @@
 name: google
-version: 2.7.1
+version: 2.8.0
 
 dependencies:
   connect-proxy:
@@ -13,3 +13,7 @@ development_dependencies:
   webmock:
     github: manastech/webmock.cr
     branch: master
+
+  # Include this in your projects shard file if you want to send emails via gmail API
+  email:
+    github: arcage/crystal-email

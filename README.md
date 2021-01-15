@@ -30,6 +30,8 @@ Currently supports following:
   - List available languages
   - Detect source language
   - Translate one language to another
+* Gmail
+  - send an email
 
 ## Installation
 
@@ -165,6 +167,7 @@ translate.translate("Some text to translate", to: "de", from: "en")
 ```
 
 ### Pay Passes
+
 Currently only allows `TicketClass` and `TicketObject` creation
 
 Output is google pay pass url that can be emailed or shared so that user can save in their google pay app
@@ -197,6 +200,30 @@ Google::EventTickets.new(auth: file_auth,
 "https://pay.google.com/gp/v/u/0/save/ENCODED_SIGNED_JWT_PAYLOAD"
 
 ```
+
+## Gmail
+
+Currently using RAW RFC 2822 to send emails, versus the optional custom message JSON.
+To generate the message you can use the [email](https://github.com/arcage/crystal-email) shard
+
+```crystal
+
+# auth needs a scope like https://www.googleapis.com/auth/gmail.send
+messages = Google::Gmail::Messages.new(auth: auth)
+
+user_id = "steve@place.os"
+
+email = EMail::Message.new
+email.from user_id
+email.to "to@example.com"
+email.subject "subject"
+email.message "hello gmail"
+
+messages.send(user_id, email.to_s)
+# returns an unparsed response body text currently
+
+```
+
 
 ## Development
 

@@ -66,23 +66,49 @@ module Google
 
     def calendar_list_request(min_access : Access? = nil) : HTTP::Request
       min_access = "&minAccessRole=#{min_access}" if min_access
-      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList?maxResults=250&showHidden=true#{min_access}", HTTP::Headers{
+      HTTP::Request.new("GET", "/calendar/v3/users/me/calendarList?maxResults=250&showHidden=true&showDeleted=false#{min_access}", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
         "User-Agent"    => @user_agent,
       })
     end
 
-    def calendar_list(response : HTTP::Client::Response) : Array(Calendar::ListEntry)
+    def calendar_list(response : HTTP::Client::Response) : Calendar::List
       Google::Exception.raise_on_failure(response)
       results = Calendar::List.from_json response.body
-      results.items
+      results
     end
 
     def calendar_list(min_access : Access? = nil) : Array(Calendar::ListEntry)
+      request = calendar_list_request(min_access)
       response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
-        client.exec(calendar_list_request(min_access))
+        client.exec(request)
       end
-      calendar_list(response)
+      results = calendar_list(response)
+
+      # Return all the pages, nextPageToken will be nil when there are no more
+      request_uri = request.resource
+      next_page = results.next_page_token
+      loop do
+        break unless next_page
+
+        response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+          client.exec(
+            "GET",
+            "#{request_uri}&pageToken=#{next_page}",
+            HTTP::Headers{
+              "Authorization" => "Bearer #{get_token}",
+              "User-Agent"    => @user_agent,
+            }
+          )
+        end
+
+        # Append the results
+        next_results = calendar_list(response)
+        results.items.concat(next_results.items)
+        next_page = next_results.next_page_token
+      end
+
+      results.items
     end
 
     # example additional options: showDeleted

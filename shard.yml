@@ -12,7 +12,6 @@ dependencies:
 development_dependencies:
   webmock:
     github: manastech/webmock.cr
-    version: 0.13.0 # remove once 0.36.0 released
 
   # Include this in your projects shard file if you want to send emails via gmail API
   email:

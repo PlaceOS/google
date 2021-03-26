@@ -24,7 +24,14 @@ module Google
     property user_agent : String
     property issuer : String
 
-    def initialize(@issuer : String, @signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = DEFAULT_USER_AGENT)
+    def initialize(@issuer : String, signing_key : String, scopes : String | Array(String), @sub : String = "", @user_agent : String = DEFAULT_USER_AGENT, encoded : Bool = false)
+      if encoded
+        raise ArgumentError.new("Base64-encode Signing Key is empty") unless signing_key.presence
+        @signing_key = String.new(Base64.decode(signing_key))
+      else
+        @signing_key = signing_key
+      end
+
       @scopes = scopes.is_a?(Array) ? scopes.join(" ") : scopes
     end
 

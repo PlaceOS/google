@@ -61,12 +61,6 @@ There are four authentication options
 Google::Auth.new(issuer: "test@example.com", signing_key: PRIVATE_KEY, scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com")
 ```
 
-or
-
-```crystal
-Google::Auth.new(issuer: "test@example.com", signing_key: BASE64_ENCODED_PRIVATE_KEY, scopes: "https://www.googleapis.com/auth/admin.directory.user.readonly", sub: "admin@example.com", encoded: true)
-```
-
 #### Google::FileAuth
 
 ```crystal

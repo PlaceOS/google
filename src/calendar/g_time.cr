@@ -19,7 +19,11 @@ module Google
         if dtime = @date_time
           dtime
         elsif dday = @date
-          dday
+          if tz = @time_zone.presence
+            dday.to_local_in(Time::Location.load(tz))
+          else
+            dday
+          end
         else
           raise "no time provided?"
         end

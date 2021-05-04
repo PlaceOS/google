@@ -16,16 +16,18 @@ module Google
       end
 
       def time : Time
-        if dtime = @date_time
+        the_time = if dtime = @date_time
           dtime
         elsif dday = @date
-          if tz = @time_zone.presence
-            dday.to_local_in(Time::Location.load(tz))
-          else
-            dday
-          end
+          dday
         else
           raise "no time provided?"
+        end
+
+        if tz = @time_zone.presence
+          the_time.to_local_in(Time::Location.load(tz))
+        else
+          the_time
         end
       end
 

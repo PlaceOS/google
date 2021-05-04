@@ -242,6 +242,8 @@ module Google
         conferenceData: conference,
       }).to_json
 
+      Log.debug { "creating event with payload\n#{body}" }
+
       HTTP::Request.new(
         "POST",
         "/calendar/v3/calendars/#{calendar_id}/events?supportsAttachments=true&conferenceDataVersion=#{conference ? 1 : 0}&sendUpdates=#{notify}",

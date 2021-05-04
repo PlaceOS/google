@@ -7,6 +7,7 @@ require "./passes/event_tickets"
 require "./gmail/messages"
 
 module Google
+  Log = ::Log.for("google")
   GOOGLE_URI = URI.parse("https://www.googleapis.com")
 
   class Exception < ::Exception

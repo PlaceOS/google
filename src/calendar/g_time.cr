@@ -17,18 +17,16 @@ module Google
 
       def time : Time
         the_time = if dtime = @date_time
+          dtime.in(Time::Location.load(@time_zone.not_nil!)) if @time_zone.presence
           dtime
         elsif dday = @date
+          dday.to_local_in(Time::Location.load(@time_zone.not_nil!)) if @time_zone.presence
           dday
         else
           raise "no time provided?"
         end
 
-        if tz = @time_zone.presence
-          the_time.to_local_in(Time::Location.load(tz))
-        else
-          the_time
-        end
+        the_time
       end
 
       # %F: ISO 8601 date (2016-04-05)

@@ -115,7 +115,7 @@ module Google
       def online_meeting_url
         return @hangout_link if @hangout_link
         if video = @conference_data.try &.entry_points.find { |point| point.type == "video" }
-          { video.uri, video.security }
+          {video.uri, video.security}
         end
       end
 
@@ -124,14 +124,14 @@ module Google
         @conference_data.try &.entry_points.each do |point|
           next unless point.type == "phone"
           # point URI starts with `tel:`
-          numbers << { point.uri[4..-1], point.security }
+          numbers << {point.uri[4..-1], point.security}
         end
         numbers
       end
 
       def online_meeting_sip
         if sip = @conference_data.try &.entry_points.find { |point| point.type == "sip" }
-          { sip.uri[4..-1], sip.security }
+          {sip.uri[4..-1], sip.security}
         end
       end
 

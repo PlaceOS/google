@@ -1,4 +1,4 @@
-[![Crystal CI](https://github.com/PlaceOS/google/actions/workflows/crystal.yml/badge.svg)](https://github.com/PlaceOS/google/actions/workflows/crystal.yml)
+[![Crystal CI](https://github.com/PlaceOS/google/actions/workflows/ci.yml/badge.svg)](https://github.com/PlaceOS/google/actions/workflows/ci.yml)
 
 # google
 

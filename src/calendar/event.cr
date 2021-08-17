@@ -26,6 +26,13 @@ module Google
       end
     end
 
+    class ConferenceSolution
+      include JSON::Serializable
+      include JSON::Serializable::Unmapped
+
+      property name : String
+    end
+
     class ConferenceData
       include JSON::Serializable
       include JSON::Serializable::Unmapped
@@ -35,6 +42,9 @@ module Google
 
       @[JSON::Field(key: "entryPoints")]
       property entry_points : Array(EntryPoint)?
+
+      @[JSON::Field(key: "conferenceSolution")]
+      property conference_solution : ConferenceSolution?
     end
 
     class Event
@@ -137,6 +147,10 @@ module Google
 
       def online_meeting_id
         @conference_data.try &.conference_id
+      end
+
+      def online_meeting_provider
+        @conference_data.try &.conference_solution.try &.name
       end
     end
   end

@@ -1,7 +1,6 @@
 name: google
 version: 3.1.0
-
-crystal: ">= 0.36.1, < 2.0.0"
+crystal: ">= 0.36.1"
 
 dependencies:
   connect-proxy:
@@ -18,3 +17,8 @@ development_dependencies:
   # Include this in your projects shard file if you want to send emails via gmail API
   email:
     github: arcage/crystal-email
+
+  ameba:
+    github: veelenga/ameba
+
+license: MIT

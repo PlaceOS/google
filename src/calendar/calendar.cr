@@ -385,6 +385,8 @@ module Google
     end
 
     private def events_other_options(opts) : String?
+      # NamedTuple doesn't have a compact map
+      # ameba:disable Performance/CompactAfterMap
       opts_string = opts.map { |key, value| "#{key}=#{value}" unless value.nil? }.compact.join("&")
       "&#{opts_string}" unless opts_string.empty?
     end

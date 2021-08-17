@@ -17,21 +17,21 @@ module Google
 
       def time : Time
         the_time = if dtime = @date_time
-          # as google sometimes provides timezones like `"GMT-07:00"`
-          begin
-            dtime.in(Time::Location.load(@time_zone.not_nil!)) if @time_zone.presence
-          rescue
-          end
-          dtime
-        elsif dday = @date
-          begin
-            dday.to_local_in(Time::Location.load(@time_zone.not_nil!)) if @time_zone.presence
-          rescue
-          end
-          dday
-        else
-          raise "no time provided?"
-        end
+                     # as google sometimes provides timezones like `"GMT-07:00"`
+                     begin
+                       dtime.in(Time::Location.load(@time_zone.not_nil!)) if @time_zone.presence
+                     rescue
+                     end
+                     dtime
+                   elsif dday = @date
+                     begin
+                       dday.to_local_in(Time::Location.load(@time_zone.not_nil!)) if @time_zone.presence
+                     rescue
+                     end
+                     dday
+                   else
+                     raise "no time provided?"
+                   end
 
         the_time
       end

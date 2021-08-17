@@ -106,7 +106,7 @@ module Google
     # https://developers.google.com/admin-sdk/directory/reference/rest/v1/members/list
     def members_request(group_id : String, include_indirect : Bool = true, role : Role? = nil)
       options = "includeDerivedMembership=#{include_indirect}&maxResults=200"
-      options += "roles=#{role.to_s}" if role
+      options += "roles=#{role}" if role
 
       HTTP::Request.new(
         "GET",

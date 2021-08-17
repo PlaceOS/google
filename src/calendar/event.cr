@@ -4,6 +4,39 @@ require "./attachment"
 
 module Google
   class Calendar
+    class EntryPoint
+      include JSON::Serializable
+
+      @[JSON::Field(key: "entryPointType")]
+      property type : String
+      property uri : String
+      property label : String?
+      property pin : String?
+
+      @[JSON::Field(key: "accessCode")]
+      property access_code : String?
+
+      @[JSON::Field(key: "meetingCode")]
+      property meeting_code : String?
+      property passcode : String?
+      property password : String?
+
+      def security
+        pin || access_code || meeting_code || passcode || password
+      end
+    end
+
+    class ConferenceData
+      include JSON::Serializable
+      include JSON::Serializable::Unmapped
+
+      @[JSON::Field(key: "conferenceId")]
+      property conference_id : String?
+
+      @[JSON::Field(key: "entryPoints")]
+      property entry_points : Array(EntryPoint)?
+    end
+
     class Event
       include JSON::Serializable
 
@@ -75,9 +108,36 @@ module Google
       property locked : Bool?
 
       @[JSON::Field(key: "conferenceData")]
-      property conference_data : JSON::Any?
+      property conference_data : ConferenceData?
 
       property attachments : Array(Attachment) = [] of Google::Calendar::Attachment
+
+      def online_meeting_url
+        return @hangout_link if @hangout_link
+        if video = @conference_data.try &.entry_points.find { |point| point.type == "video" }
+          { video.uri, video.security }
+        end
+      end
+
+      def online_meeting_phones
+        numbers = [] of Tuple(String, String?)
+        @conference_data.try &.entry_points.each do |point|
+          next unless point.type == "phone"
+          # point URI starts with `tel:`
+          numbers << { point.uri[4..-1], point.security }
+        end
+        numbers
+      end
+
+      def online_meeting_sip
+        if sip = @conference_data.try &.entry_points.find { |point| point.type == "sip" }
+          { sip.uri[4..-1], sip.security }
+        end
+      end
+
+      def online_meeting_id
+        @conference_data.try &.conference_id
+      end
     end
   end
 end

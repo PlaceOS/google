@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/PlaceOS/google.svg?branch=master)](https://travis-ci.com/PlaceOS/google)
+[![Crystal CI](https://github.com/PlaceOS/google/actions/workflows/crystal.yml/badge.svg)](https://github.com/PlaceOS/google/actions/workflows/crystal.yml)
 
 # google
 

@@ -123,7 +123,7 @@ module Google
       property attachments : Array(Attachment) = [] of Google::Calendar::Attachment
 
       def online_meeting_url
-        return @hangout_link if @hangout_link
+        return {@hangout_link, nil.as(String?)} if @hangout_link
         if video = @conference_data.try &.entry_points.find { |point| point.type == "video" }
           {video.uri, video.security}
         end

@@ -124,14 +124,14 @@ module Google
 
       def online_meeting_url
         return {@hangout_link, nil.as(String?)} if @hangout_link
-        if video = @conference_data.try &.entry_points.find { |point| point.type == "video" }
+        if video = @conference_data.try &.entry_points.try &.find { |point| point.type == "video" }
           {video.uri, video.security}
         end
       end
 
       def online_meeting_phones
         numbers = [] of Tuple(String, String?)
-        @conference_data.try &.entry_points.each do |point|
+        @conference_data.try &.entry_points.try &.each do |point|
           next unless point.type == "phone"
           # point URI starts with `tel:`
           numbers << {point.uri[4..-1], point.security}
@@ -140,7 +140,7 @@ module Google
       end
 
       def online_meeting_sip
-        if sip = @conference_data.try &.entry_points.find { |point| point.type == "sip" }
+        if sip = @conference_data.try &.entry_points.try &.find { |point| point.type == "sip" }
           {sip.uri[4..-1], sip.security}
         end
       end

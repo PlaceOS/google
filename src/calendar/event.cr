@@ -24,6 +24,9 @@ module Google
       def security
         pin || access_code || meeting_code || passcode || password
       end
+
+      def initialize(@type, @uri, @label = nil, @access_code = nil)
+      end
     end
 
     class ConferenceSolution

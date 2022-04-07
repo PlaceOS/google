@@ -320,7 +320,7 @@ module Google
       update(response)
     end
 
-    def decline(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All)
+    def decline(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All, comment : String? = nil)
       event = event(event_id, calendar_id)
       return true unless event
 
@@ -342,6 +342,7 @@ module Google
       return false if index == -1
 
       attendees[index].response_status = "declined"
+      attendees[index].comment = comment
       update_request(event_id, calendar_id, attendees: attendees, notify: notify)
       true
     end

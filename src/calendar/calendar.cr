@@ -320,6 +320,32 @@ module Google
       update(response)
     end
 
+    def decline(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All)
+      event = event(event_id, calendar_id)
+      return true unless event
+
+      attendees = event.attendees.not_nil!
+
+      index = -1
+      calendar_id = calendar_id.downcase
+
+      attendees.each_with_index do |attend, idx|
+        if calendar_id == "primary" && attend.self
+          index = idx
+          break
+        elsif calendar_id == attend.email
+          index = idx
+          break
+        end
+      end
+
+      return false if index == -1
+
+      attendees[index].response_status = "declined"
+      update_request(event_id, calendar_id, attendees: attendees, notify: notify)
+      true
+    end
+
     def move_request(
       event_id : String,
       calendar_id : String,

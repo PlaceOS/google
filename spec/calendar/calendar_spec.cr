@@ -25,7 +25,7 @@ describe Google::Calendar do
       CalendarHelper.mock_token
       CalendarHelper.mock_event
 
-      CalendarHelper.calendar.event(123).is_a?(Google::Calendar::Event).should eq(true)
+      CalendarHelper.calendar.event("123456789").is_a?(Google::Calendar::Event).should eq(true)
     end
   end
 
@@ -44,6 +44,16 @@ describe Google::Calendar do
       CalendarHelper.mock_event_update
 
       CalendarHelper.calendar.update("123456789", summary: "updated summary").is_a?(Google::Calendar::Event).should eq(true)
+    end
+  end
+
+  describe "#decline" do
+    it "works in case of successful api call" do
+      CalendarHelper.mock_token
+      CalendarHelper.mock_event
+      CalendarHelper.mock_event_update
+
+      CalendarHelper.calendar.decline("123456789").should eq(true)
     end
   end
 
@@ -180,7 +190,7 @@ module CalendarHelper
   end
 
   def mock_event
-    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123")
+    WebMock.stub(:get, "https://www.googleapis.com/calendar/v3/calendars/primary/events/123456789")
       .to_return(body: event_response.to_json)
   end
 
@@ -216,6 +226,10 @@ module CalendarHelper
       "creator":  {
         "email": "test@example.com",
       },
+      "attendees": [{
+        "email": "test@example.com",
+        "self":  true,
+      }],
     }
   end
 

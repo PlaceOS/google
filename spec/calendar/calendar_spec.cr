@@ -92,10 +92,10 @@ describe Google::Calendar do
 
       WebMock.stub(:post, "https://www.googleapis.com/batch/calendar/v3")
         .with(
-          body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nGET /calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2016-02-15T10:20:30Z HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nGET /calendar/v3/users/me/calendarList?maxResults=250&showHidden=true&showDeleted=false HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Switch\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--",
+          body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <0@place.tech>\r\n\r\nGET /calendar/v3/calendars/primary/events?maxResults=2500&singleEvents=true&timeMin=2016-02-15T10:20:30Z HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Google on Crystal\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <1@place.tech>\r\n\r\nGET /calendar/v3/users/me/calendarList?maxResults=250&showHidden=true&showDeleted=false HTTP/1.1\r\nAuthorization: Bearer test_token\r\nUser-Agent: Google on Crystal\r\n\r\n\r\n----------------------------c2KH8mGV_l_gxMQ7c8wngsrk--",
           headers: {
             "Authorization" => "Bearer test_token",
-            "User-Agent"    => "Switch",
+            "User-Agent"    => "Google on Crystal",
             "Content-Type"  => "multipart/mixed; boundary=--------------------------c2KH8mGV_l_gxMQ7c8wngsrk",
           }
         ).to_return(body: "----------------------------c2KH8mGV_l_gxMQ7c8wngsrk\r\nContent-Type: application/http\r\nContent-ID: <response-1@place.tech>\r\n\r\nHTTP/1.1 200 OK\r\nContent-Type application/json\r\n\r\n#{{

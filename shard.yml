@@ -1,11 +1,11 @@
 name: google
-version: 3.3.0
+version: 3.3.1
 crystal: ">= 0.36.1"
 
 dependencies:
   connect-proxy:
     github: spider-gazelle/connect-proxy
-    version: ~> 1.0
+    version: ~> 2.0
   jwt:
     github: crystal-community/jwt
     version: ~> 1.4

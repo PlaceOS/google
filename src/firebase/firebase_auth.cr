@@ -48,7 +48,7 @@ module Google
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/delete
     def delete_request(local_id : String, **opts)
       opts = opts.merge({
-        localId: local_id
+        localId: local_id,
       })
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:delete", HTTP::Headers{
@@ -68,7 +68,7 @@ module Google
 
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/lookup
     def lookup_request(local_id : Array(String)? = nil, **opts)
-      opts = opts.merge({ localId: local_id }) if local_id
+      opts = opts.merge({localId: local_id}) if local_id
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:lookup", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -88,7 +88,7 @@ module Google
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/query
     def query_request(expression, **opts)
       opts = opts.merge({
-        expression: expression
+        expression: expression,
       })
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:query", HTTP::Headers{

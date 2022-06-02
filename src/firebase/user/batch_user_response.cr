@@ -5,7 +5,7 @@ module Google
     class BatchUserResponse
       include JSON::Serializable
 
-      property kind : String
+      property kind : String?
       property users : Array(User)?
 
       @[JSON::Field(key: "nextPageToken")]

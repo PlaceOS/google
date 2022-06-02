@@ -5,7 +5,7 @@ module Google
     class LookupUserResponse
       include JSON::Serializable
 
-      property kind : String
+      property kind : String?
       property users : Array(User)?
 
       def users : Array(User)

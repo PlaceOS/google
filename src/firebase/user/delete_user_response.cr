@@ -5,7 +5,7 @@ module Google
     class DeleteUserResponse
       include JSON::Serializable
 
-      property kind : String
+      property kind : String?
     end
   end
 end

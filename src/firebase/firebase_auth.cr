@@ -106,12 +106,9 @@ module Google
     end
 
     private def get_token : String
-      auth = @auth
-      case auth
-      in Google::Auth, Google::FileAuth
-        auth.get_token.access_token
-      in String
-        auth
+      case (auth = @auth)
+      in Google::Auth, Google::FileAuth then auth.get_token.access_token
+      in String                         then auth
       end
     end
 

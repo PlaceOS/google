@@ -4,12 +4,15 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
+require "../auth/auth_helper"
 
 require "./detection_result"
 require "./translation_result"
 
 module Google
   class Translate
+    include AuthHelper
+
     @user_agent : String
 
     TRANSLATE_URI = URI.parse("https://translate.googleapis.com")
@@ -66,16 +69,6 @@ module Google
       json["data"]["languages"].as_a.map do |item|
         {item["language"].as_s, item["name"].as_s}
       end.to_h
-    end
-
-    private def get_token : String
-      auth = @auth
-      case auth
-      in Google::Auth, Google::FileAuth
-        auth.get_token.access_token
-      in String
-        auth
-      end
     end
   end
 end

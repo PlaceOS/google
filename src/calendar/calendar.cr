@@ -4,6 +4,7 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
+require "../auth/auth_helper"
 require "./event"
 require "./events"
 require "./g_time"
@@ -39,6 +40,8 @@ module Google
   end
 
   class Calendar
+    include AuthHelper
+
     def initialize(auth : Google::Auth | Google::FileAuth | String, user_agent : String? = nil)
       @auth = auth
       # If user agent not provided, then use the auth.user_agent
@@ -406,16 +409,6 @@ module Google
       # ameba:disable Performance/CompactAfterMap
       opts_string = opts.map { |key, value| "#{key}=#{value}" unless value.nil? }.compact.join("&")
       "&#{opts_string}" unless opts_string.empty?
-    end
-
-    private def get_token : String
-      auth = @auth
-      case auth
-      in Google::Auth, Google::FileAuth
-        auth.get_token.access_token
-      in String
-        auth
-      end
     end
 
     protected def extended_properties(opts, extended_properties)

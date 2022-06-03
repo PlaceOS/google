@@ -4,10 +4,13 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
+require "../auth/auth_helper"
 require "./user/*"
 
 module Google
   class FirebaseAuth
+    include AuthHelper
+
     def initialize(@auth : Google::Auth | Google::FileAuth | String, @project_id : String, user_agent : String? = nil)
       # If user agent not provided, then use the auth.user_agent
       # if a token was passed in directly then use the default agent string
@@ -103,13 +106,6 @@ module Google
 
     def query(expression, **opts)
       query perform(query_request(expression, **opts))
-    end
-
-    private def get_token : String
-      case (auth = @auth)
-      in Google::Auth, Google::FileAuth then auth.get_token.access_token
-      in String                         then auth
-      end
     end
 
     private def perform(request)

@@ -6,11 +6,7 @@ module Google
       include JSON::Serializable
 
       property kind : String?
-      property users : Array(User)?
-
-      def users : Array(User)
-        @users || [] of User
-      end
+      getter users : Array(User) { [] of User }
     end
   end
 end

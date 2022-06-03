@@ -1,3 +1,6 @@
+require "../firebase_epoch_converter"
+require "../firebase_epoch_millis_converter"
+require "../firebase_time_format_converter"
 require "./provider_user_info"
 
 module Google
@@ -5,38 +8,38 @@ module Google
     class User
       include JSON::Serializable
 
-      property email : String
+      getter email : String
 
       @[JSON::Field(key: "displayName")]
-      property display_name : String?
+      getter display_name : String?
 
-      property language : String?
+      getter language : String?
 
       @[JSON::Field(key: "photoUrl")]
-      property photo_url : String?
+      getter photo_url : String?
 
       @[JSON::Field(key: "timeZone")]
-      property time_zone : String?
+      getter time_zone : String?
 
       @[JSON::Field(key: "emailVerified")]
-      property email_verified : Bool
+      getter email_verified : Bool
 
       @[JSON::Field(key: "providerUserInfo")]
-      property provider_user_info : Array(ProviderUserInfo)
+      getter provider_user_info : Array(ProviderUserInfo)
 
-      @[JSON::Field(key: "validSince")]
-      property valid_since : String # Int64
+      @[JSON::Field(key: "validSince", converter: Google::FirebaseAuth::EpochConverter)]
+      getter valid_since : Time
 
-      property disabled : Bool?
+      getter disabled : Bool?
 
-      @[JSON::Field(key: "lastLoginAt")]
-      property last_login_at : String # Int64
+      @[JSON::Field(key: "lastLoginAt", converter: Google::FirebaseAuth::EpochMillisConverter)]
+      getter last_login_at : Time
 
-      @[JSON::Field(key: "createdAt")]
-      property created_at : String # Int64
+      @[JSON::Field(key: "createdAt", converter: Google::FirebaseAuth::EpochMillisConverter)]
+      getter created_at : Time
 
-      @[JSON::Field(key: "lastRefreshAt")]
-      property last_refresh_at : String # Time
+      @[JSON::Field(key: "lastRefreshAt", converter: Google::FirebaseAuth::TimeFormatConverter)]
+      getter last_refresh_at : Time
     end
   end
 end

@@ -11,16 +11,6 @@ require "./list"
 require "./availability"
 
 module Google
-  module RFC3339Converter
-    def self.from_json(time : JSON::PullParser) : Time
-      Time.parse_rfc3339(time.read_string)
-    end
-
-    def self.to_json(time : Time, json : JSON::Builder)
-      time.to_json
-    end
-  end
-
   enum UpdateGuests
     All
     ExternalOnly

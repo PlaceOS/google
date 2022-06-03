@@ -1,6 +1,3 @@
-require "../firebase_epoch_converter"
-require "../firebase_epoch_millis_converter"
-require "../firebase_time_format_converter"
 require "./provider_user_info"
 
 module Google
@@ -27,18 +24,18 @@ module Google
       @[JSON::Field(key: "providerUserInfo")]
       getter provider_user_info : Array(ProviderUserInfo)
 
-      @[JSON::Field(key: "validSince", converter: Google::FirebaseAuth::EpochConverter)]
+      @[JSON::Field(key: "validSince", converter: Google::EpochConverter)]
       getter valid_since : Time
 
       getter disabled : Bool?
 
-      @[JSON::Field(key: "lastLoginAt", converter: Google::FirebaseAuth::EpochMillisConverter)]
+      @[JSON::Field(key: "lastLoginAt", converter: Google::EpochMillisConverter)]
       getter last_login_at : Time
 
-      @[JSON::Field(key: "createdAt", converter: Google::FirebaseAuth::EpochMillisConverter)]
+      @[JSON::Field(key: "createdAt", converter: Google::EpochMillisConverter)]
       getter created_at : Time
 
-      @[JSON::Field(key: "lastRefreshAt", converter: Google::FirebaseAuth::TimeFormatConverter)]
+      @[JSON::Field(key: "lastRefreshAt", converter: Google::RFC3339Converter)]
       getter last_refresh_at : Time
     end
   end

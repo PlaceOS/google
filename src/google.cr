@@ -1,3 +1,4 @@
+require "./converters/*"
 require "./calendar/calendar"
 require "./calendar/batch_request"
 require "./directory/directory"

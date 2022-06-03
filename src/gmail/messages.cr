@@ -1,13 +1,13 @@
 require "base64"
 require "connect-proxy"
 require "../auth/file_auth"
-require "../auth/auth_helper"
+require "../auth/get_token"
 
 module Google::Gmail
   GMAIL_URI = URI.parse("https://gmail.googleapis.com")
 
   class Messages
-    include AuthHelper
+    include Auth::GetToken
 
     def initialize(@auth : Google::Auth | Google::FileAuth | String)
     end

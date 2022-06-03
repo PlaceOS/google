@@ -4,14 +4,14 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
-require "../auth/auth_helper"
+require "../auth/get_token"
 
 require "./detection_result"
 require "./translation_result"
 
 module Google
   class Translate
-    include AuthHelper
+    include Auth::GetToken
 
     @user_agent : String
 

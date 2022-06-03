@@ -4,7 +4,7 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
-require "../auth/auth_helper"
+require "../auth/get_token"
 require "./event"
 require "./events"
 require "./g_time"
@@ -40,7 +40,7 @@ module Google
   end
 
   class Calendar
-    include AuthHelper
+    include Auth::GetToken
 
     def initialize(auth : Google::Auth | Google::FileAuth | String, user_agent : String? = nil)
       @auth = auth

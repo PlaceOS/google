@@ -4,7 +4,7 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
-require "../auth/auth_helper"
+require "../auth/get_token"
 require "./location"
 require "./member"
 require "./user/*"
@@ -12,7 +12,7 @@ require "./group/*"
 
 module Google
   class Directory
-    include AuthHelper
+    include Auth::GetToken
 
     def initialize(auth : Google::Auth | Google::FileAuth | String, @domain : String, @projection : String = "full", @view_type : String = "admin_view", user_agent : String? = nil)
       @auth = auth

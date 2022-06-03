@@ -4,13 +4,13 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
-require "../auth/auth_helper"
+require "../auth/get_token"
 require "./drive_file"
 require "./list"
 
 module Google
   class Files
-    include AuthHelper
+    include Auth::GetToken
 
     @user_agent : String
 

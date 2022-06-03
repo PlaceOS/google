@@ -4,6 +4,7 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
+require "../auth/get_token"
 require "./location"
 require "./member"
 require "./user/*"
@@ -11,6 +12,8 @@ require "./group/*"
 
 module Google
   class Directory
+    include Auth::GetToken
+
     def initialize(auth : Google::Auth | Google::FileAuth | String, @domain : String, @projection : String = "full", @view_type : String = "admin_view", user_agent : String? = nil)
       @auth = auth
       # If user agent not provided, then use the auth.user_agent
@@ -151,16 +154,6 @@ module Google
       end
 
       results
-    end
-
-    private def get_token : String
-      auth = @auth
-      case auth
-      in Google::Auth, Google::FileAuth
-        auth.get_token.access_token
-      in String
-        auth
-      end
     end
 
     private def perform(request)

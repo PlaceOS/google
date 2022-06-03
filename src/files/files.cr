@@ -4,11 +4,14 @@ require "uri"
 
 require "../auth/auth"
 require "../auth/file_auth"
+require "../auth/get_token"
 require "./drive_file"
 require "./list"
 
 module Google
   class Files
+    include Auth::GetToken
+
     @user_agent : String
 
     def initialize(auth : Google::Auth | Google::FileAuth | String, user_agent : String? = nil)
@@ -85,16 +88,6 @@ module Google
       Google::Exception.raise_on_failure(response)
 
       true
-    end
-
-    private def get_token : String
-      auth = @auth
-      case auth
-      in Google::Auth, Google::FileAuth
-        auth.get_token.access_token
-      in String
-        auth
-      end
     end
   end
 end

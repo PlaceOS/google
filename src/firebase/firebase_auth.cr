@@ -8,8 +8,7 @@ require "./user/*"
 
 module Google
   class FirebaseAuth
-    def initialize(auth : Google::Auth | Google::FileAuth | String, @project_id : String, user_agent : String? = nil)
-      @auth = auth
+    def initialize(@auth : Google::Auth | Google::FileAuth | String, @project_id : String, user_agent : String? = nil)
       # If user agent not provided, then use the auth.user_agent
       # if a token was passed in directly then use the default agent string
       agent = user_agent || case auth

@@ -8,6 +8,8 @@ require "../auth/get_token"
 require "./user/*"
 
 module Google
+
+  # API details: https://cloud.google.com/identity-platform/docs/reference/rest
   class FirebaseAuth
     include Auth::GetToken
 
@@ -141,7 +143,7 @@ module Google
     end
 
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/update
-    def update_request(local_id : String, display_name : String? = nil, email : String? = nil, password : String? = nil, disable : Bool? = nil, **opts)
+    def update_request(local_id : String, display_name : String? = nil, email : String? = nil, password : String? = nil, disable_user : Bool? = nil, **opts)
       opts = opts.merge({
         localId: local_id,
       })
@@ -161,8 +163,8 @@ module Google
       UpdateUserResponse.from_json response.body
     end
 
-    def update(local_id : String, display_name : String? = nil, email : String? = nil, password : String? = nil, disable : Bool? = nil, **opts)
-      update perform(update_request(local_id, display_name, email, password, disable, **opts))
+    def update(local_id : String, display_name : String? = nil, email : String? = nil, password : String? = nil, disable_user : Bool? = nil, **opts)
+      update perform(update_request(local_id, display_name, email, password, disable_user, **opts))
     end
 
     ###########

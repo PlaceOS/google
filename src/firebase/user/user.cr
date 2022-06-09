@@ -2,6 +2,15 @@ require "./provider_user_info"
 
 module Google
   class FirebaseAuth
+
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/UserInfo
+    #
+    # Fields left out:
+    # - dateOfBirth
+    # - passwordHash
+    # - salt
+    # - version
+    # - mfaInfo
     class User
       include JSON::Serializable
 
@@ -21,7 +30,6 @@ module Google
       @[JSON::Field(key: "timeZone")]
       getter time_zone : String?
 
-      # fields left out
       # dateOfBirth
       # passwordHash
       # salt
@@ -70,7 +78,6 @@ module Google
       @[JSON::Field(key: "tenantId")]
       getter tenant_id : String?
 
-      # fields left out
       # mfaInfo
 
       @[JSON::Field(key: "initialEmail")]

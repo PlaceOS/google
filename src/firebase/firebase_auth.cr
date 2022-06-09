@@ -30,12 +30,13 @@ module Google
     ####################
 
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/accounts/signUp
-    def sign_up_request(email : String?, password : String?, **opts)
+    def sign_up_request(email : String? = nil, password : String? = nil, display_name : String? = nil, **opts)
       opts = opts.merge({
         targetProjectId: @project_id,
-        email: email,
-        password: password,
       })
+      opts = opts.merge({email: email}) if email
+      opts = opts.merge({password: password}) if password
+      opts = opts.merge({displayName: display_name}) if display_name
 
       HTTP::Request.new("POST", "/v1/accounts:signUp", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -48,8 +49,8 @@ module Google
       SignUpUserResponse.from_json response.body
     end
 
-    def sign_up(email : String?, password : String?, **opts)
-      sign_up perform(sign_up_request(email, password, **opts))
+    def sign_up(email : String? = nil, password : String? = nil, display_name : String? = nil, **opts)
+      sign_up perform(sign_up_request(email, password, display_name, **opts))
     end
 
     #############################
@@ -138,6 +139,35 @@ module Google
     def query(expression, **opts)
       query perform(query_request(expression, **opts))
     end
+
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/update
+    def update_request(local_id : String, display_name : String? = nil, email : String? = nil, password : String? = nil, disable : Bool? = nil, **opts)
+      opts = opts.merge({
+        localId: local_id,
+      })
+      opts = opts.merge({displayName: display_name}) if display_name
+      opts = opts.merge({email: email}) if email
+      opts = opts.merge({password: password}) if password
+      opts = opts.merge({disableUser: disable}) if disable
+
+      HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:update", HTTP::Headers{
+        "Authorization" => "Bearer #{get_token}",
+        "User-Agent"    => @user_agent,
+      }, opts.to_json)
+    end
+
+    def update(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
+      UpdateUserResponse.from_json response.body
+    end
+
+    def update(local_id : String, display_name : String? = nil, email : String? = nil, password : String? = nil, disable : Bool? = nil, **opts)
+      update perform(update_request(local_id, display_name, email, password, disable, **opts))
+    end
+
+    ###########
+    # Helpers #
+    ###########
 
     private def perform(request)
       ConnectProxy::HTTPClient.new(FIREBASE_AUTH_URI) do |client|

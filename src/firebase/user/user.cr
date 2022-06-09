@@ -10,7 +10,7 @@ module Google
     # - salt
     # - version
     # - mfaInfo
-    class User
+    struct User
       include JSON::Serializable
 
       @[JSON::Field(key: "localId")]
@@ -37,7 +37,7 @@ module Google
       @[JSON::Field(key: "emailVerified")]
       getter email_verified : Bool?
 
-      @[JSON::Field(key: "passwordUpdatedAt", converter: Google::EpochMillisConverter)]
+      @[JSON::Field(key: "passwordUpdatedAt", converter: Time::EpochMillisConverter)]
       getter password_updated_at : Time?
 
       @[JSON::Field(key: "providerUserInfo")]

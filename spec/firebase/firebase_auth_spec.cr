@@ -6,8 +6,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_sign_up
 
-      expected = Google::FirebaseAuth::SignUpUserResponse.from_json(FirebaseAuthHelper.sign_up_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.sign_up(email: "test-user@example.com").to_json
+      expected = Google::FirebaseAuth::SignUpUserResponse.from_json(FirebaseAuthHelper.sign_up_response.to_json)
+      received = FirebaseAuthHelper.firebase.sign_up(email: "test-user@example.com")
       received.should eq(expected)
     end
   end
@@ -17,8 +17,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_users
 
-      expected = Google::FirebaseAuth::BatchUserResponse.from_json(FirebaseAuthHelper.users_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.users.to_json
+      expected = Google::FirebaseAuth::BatchUserResponse.from_json(FirebaseAuthHelper.users_response.to_json)
+      received = FirebaseAuthHelper.firebase.users
       received.should eq(expected)
     end
   end
@@ -28,8 +28,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_delete
 
-      expected = Google::FirebaseAuth::DeleteUserResponse.from_json(FirebaseAuthHelper.delete_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.delete("local-id").to_json
+      expected = Google::FirebaseAuth::DeleteUserResponse.from_json(FirebaseAuthHelper.delete_response.to_json)
+      received = FirebaseAuthHelper.firebase.delete("local-id")
       received.should eq(expected)
     end
   end
@@ -39,8 +39,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_lookup
 
-      expected = Google::FirebaseAuth::LookupUserResponse.from_json(FirebaseAuthHelper.lookup_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.lookup(["local-id"]).to_json
+      expected = Google::FirebaseAuth::LookupUserResponse.from_json(FirebaseAuthHelper.lookup_response.to_json)
+      received = FirebaseAuthHelper.firebase.lookup(["local-id"])
       received.should eq(expected)
     end
   end
@@ -50,8 +50,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_query
 
-      expected = Google::FirebaseAuth::QueryUserResponse.from_json(FirebaseAuthHelper.query_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.query([{"email" => "test-user@example.com"}]).to_json
+      expected = Google::FirebaseAuth::QueryUserResponse.from_json(FirebaseAuthHelper.query_response.to_json)
+      received = FirebaseAuthHelper.firebase.query([{"email" => "test-user@example.com"}])
       received.should eq(expected)
     end
   end
@@ -61,8 +61,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_update
 
-      expected = Google::FirebaseAuth::UpdateUserResponse.from_json(FirebaseAuthHelper.update_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.update("asdfghjklzxcvbnm", display_name: "Test User").to_json
+      expected = Google::FirebaseAuth::UpdateUserResponse.from_json(FirebaseAuthHelper.update_response.to_json)
+      received = FirebaseAuthHelper.firebase.update("asdfghjklzxcvbnm", display_name: "Test User")
       received.should eq(expected)
     end
   end

@@ -3,7 +3,7 @@ require "./provider_user_info"
 module Google
   class FirebaseAuth
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/SetAccountInfoResponse
-    class UpdateUserResponse
+    struct UpdateUserResponse
       include JSON::Serializable
 
       getter kind : String?

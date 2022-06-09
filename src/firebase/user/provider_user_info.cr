@@ -15,7 +15,7 @@ module Google
       @[JSON::Field(key: "federatedId")]
       getter federated_id : String
 
-      getter email : String
+      getter email : String?
 
       @[JSON::Field(key: "rawId")]
       getter raw_id : String

@@ -25,6 +25,37 @@ module Google
 
     @user_agent : String
 
+    ####################
+    # Users - accounts #
+    ####################
+
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/accounts/signUp
+    def sign_up_request(email : String?, password : String?, **opts)
+      opts = opts.merge({
+        targetProjectId: @project_id,
+        email: email,
+        password: password,
+      })
+
+      HTTP::Request.new("POST", "/v1/accounts:signUp", HTTP::Headers{
+        "Authorization" => "Bearer #{get_token}",
+        "User-Agent"    => @user_agent,
+      }, opts.to_json)
+    end
+
+    def sign_up(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
+      SignUpUserResponse.from_json response.body
+    end
+
+    def sign_up(email : String?, password : String?, **opts)
+      sign_up perform(sign_up_request(email, password, **opts))
+    end
+
+    #############################
+    # Users - projects.accounts #
+    #############################
+
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/batchGet
     def users_request(limit = 500, **opts)
       opts = opts.merge({

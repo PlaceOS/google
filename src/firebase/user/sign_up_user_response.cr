@@ -17,8 +17,8 @@ module Google
       @[JSON::Field(key: "refreshToken")]
       getter refresh_token : String?
 
-      @[JSON::Field(key: "expiresIn", converter: Google::StringTypeConverter(Int64))]
-      getter expires_in : Int64?
+      @[JSON::Field(key: "expiresIn", converter: Google::TimeSpanConverter)]
+      getter expires_in : Time::Span?
 
       @[JSON::Field(key: "localId")]
       getter local_id : String

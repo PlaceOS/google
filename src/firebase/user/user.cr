@@ -72,8 +72,6 @@ module Google
       @[JSON::Field(key: "tenantId")]
       getter tenant_id : String?
 
-      # mfaInfo
-
       @[JSON::Field(key: "initialEmail")]
       getter initial_email : String?
 

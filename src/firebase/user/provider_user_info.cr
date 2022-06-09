@@ -1,6 +1,5 @@
 module Google
   class FirebaseAuth
-
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/ProviderUserInfo
     class ProviderUserInfo
       include JSON::Serializable

@@ -1,6 +1,5 @@
 module Google
   class FirebaseAuth
-
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/SignUpResponse
     class SignUpUserResponse
       include JSON::Serializable

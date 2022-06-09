@@ -2,7 +2,6 @@ require "./provider_user_info"
 
 module Google
   class FirebaseAuth
-
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/UserInfo
     #
     # Fields left out:

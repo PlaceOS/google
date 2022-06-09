@@ -8,7 +8,6 @@ require "../auth/get_token"
 require "./user/*"
 
 module Google
-
   # API details: https://cloud.google.com/identity-platform/docs/reference/rest
   class FirebaseAuth
     include Auth::GetToken

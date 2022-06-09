@@ -31,7 +31,7 @@ module Google
       getter email_verified : Bool?
 
       @[JSON::Field(key: "passwordUpdatedAt", converter: Google::EpochMillisConverter)]
-      password_updated_at : Time?
+      getter password_updated_at : Time?
 
       @[JSON::Field(key: "providerUserInfo")]
       getter provider_user_info : Array(ProviderUserInfo)?

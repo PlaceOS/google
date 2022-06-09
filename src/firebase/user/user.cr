@@ -29,11 +29,6 @@ module Google
       @[JSON::Field(key: "timeZone")]
       getter time_zone : String?
 
-      # dateOfBirth
-      # passwordHash
-      # salt
-      # version
-
       @[JSON::Field(key: "emailVerified")]
       getter email_verified : Bool?
 

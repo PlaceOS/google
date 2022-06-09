@@ -3,6 +3,9 @@ require "./provider_user_info"
 module Google
   class FirebaseAuth
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/SetAccountInfoResponse
+    #
+    # Fields left out:
+    # - passwordHash
     struct UpdateUserResponse
       include JSON::Serializable
 
@@ -33,9 +36,6 @@ module Google
 
       @[JSON::Field(key: "expiresIn", converter: Google::StringTypeConverter(Int64))]
       getter expires_in : Int64?
-
-      # fields left out
-      # passwordHash
 
       @[JSON::Field(key: "emailVerified")]
       getter email_verified : Bool?

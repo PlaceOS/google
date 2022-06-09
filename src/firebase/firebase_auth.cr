@@ -148,7 +148,7 @@ module Google
       opts = opts.merge({displayName: display_name}) if display_name
       opts = opts.merge({email: email}) if email
       opts = opts.merge({password: password}) if password
-      opts = opts.merge({disableUser: disable}) if disable
+      opts = opts.merge({disableUser: disable_user}) unless disable_user.nil?
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:update", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",

@@ -86,6 +86,44 @@ describe Google::Calendar do
     end
   end
 
+  describe Google::Calendar::Notification do
+    it "#watch" do
+      CalendarHelper.mock_token
+
+      time = 2.days.from_now
+      calendar_id = "resource1@resource.gmail.com"
+
+      WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/#{calendar_id}/events/watch")
+        .with(body: "{\"id\":\"1234567\",\"type\":\"web_hook\",\"address\":\"calendars/#{calendar_id}/events\",\"token\":\"mod-1234\",\"expiration\":#{time.to_unix_ms}}", headers: {"Authorization" => "Bearer test_token", "Content-Type" => "application/json", "User-Agent" => "Google on Crystal"})
+        .to_return(body: %({
+          "kind": "api#channel",
+          "id": "1234567",
+          "resourceId": "o3hgv1538sdjfh",
+          "resourceUri": "https://www.googleapis.com/calendar/v3/calendars/my_calendar@gmail.com/events",
+          "token": "mod-1234",
+          "expiration": #{time.to_unix_ms}
+        }))
+
+      receipt = CalendarHelper.calendar.watch("1234567", "calendars/#{calendar_id}/events", "mod-1234", time)
+      receipt.is_a?(Google::Calendar::Notification::Receipt).should eq(true)
+      receipt.expiration.should eq time.to_unix_ms
+    end
+
+    it "#stop_watching" do
+      CalendarHelper.mock_token
+
+      watch_id = "1234567"
+      resource_id = "o3hgv1538sdjfh"
+
+      WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/channels/stop")
+        .with(body: "{\"id\":\"#{watch_id}\",\"resourceId\":\"#{resource_id}\"}", headers: {"Authorization" => "Bearer test_token", "Content-Type" => "application/json", "User-Agent" => "Google on Crystal"})
+        .to_return(body: "")
+
+      resp = CalendarHelper.calendar.stop_watching(watch_id, resource_id)
+      resp.should eq(true)
+    end
+  end
+
   describe "#batch" do
     it "works in case of successful api call" do
       CalendarHelper.mock_token

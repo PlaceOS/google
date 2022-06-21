@@ -10,6 +10,7 @@ require "./events"
 require "./g_time"
 require "./list"
 require "./availability"
+require "./notification"
 
 module Google
   enum UpdateGuests
@@ -366,6 +367,68 @@ module Google
         client.exec(move_request(*args, **opts))
       end
       move(response)
+    end
+
+    def watch_request(
+      watch_id : String,
+      address : String,
+      token : String? = nil,
+      expiration : Time? = nil
+    )
+      HTTP::Request.new(
+        "POST",
+        "/calendar/v3/#{address}/watch",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "Content-Type"  => "application/json",
+          "User-Agent"    => @user_agent,
+        },
+        Calendar::Notification.new(watch_id, address, token, expiration).to_json
+      )
+    end
+
+    def watch(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
+      Calendar::Notification::Receipt.from_json response.body
+    end
+
+    # A resource https://developers.google.com/calendar/api/guides/push
+    def watch(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(watch_request(*args, **opts))
+      end
+      watch(response)
+    end
+
+    def stop_watching_request(
+      watch_id : String,
+      resource_id : String
+    )
+      HTTP::Request.new(
+        "POST",
+        "/calendar/v3/channels/stop",
+        HTTP::Headers{
+          "Authorization" => "Bearer #{get_token}",
+          "Content-Type"  => "application/json",
+          "User-Agent"    => @user_agent,
+        },
+        {
+          id:         watch_id,
+          resourceId: resource_id,
+        }.to_json
+      )
+    end
+
+    def stop_watching(response : HTTP::Client::Response)
+      Google::Exception.raise_on_failure(response)
+      true
+    end
+
+    def stop_watching(*args, **opts)
+      response = ConnectProxy::HTTPClient.new(GOOGLE_URI) do |client|
+        client.exec(stop_watching_request(*args, **opts))
+      end
+      stop_watching(response)
     end
 
     # Find availability (free/busy) for calendars

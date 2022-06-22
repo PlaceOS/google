@@ -371,19 +371,20 @@ module Google
 
     def watch_request(
       watch_id : String,
-      address : String,
+      resource : String,
+      notification_uri : String,
       token : String? = nil,
       expiration : Time? = nil
     )
       HTTP::Request.new(
         "POST",
-        "/calendar/v3/#{address}/watch",
+        "/calendar/v3/#{resource}/watch",
         HTTP::Headers{
           "Authorization" => "Bearer #{get_token}",
           "Content-Type"  => "application/json",
           "User-Agent"    => @user_agent,
         },
-        Calendar::Notification.new(watch_id, address, token, expiration).to_json
+        Calendar::Notification.new(watch_id, notification_uri, token, expiration).to_json
       )
     end
 

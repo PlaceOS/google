@@ -94,7 +94,7 @@ describe Google::Calendar do
       calendar_id = "resource1@resource.gmail.com"
 
       WebMock.stub(:post, "https://www.googleapis.com/calendar/v3/calendars/#{calendar_id}/events/watch")
-        .with(body: "{\"id\":\"1234567\",\"type\":\"web_hook\",\"address\":\"calendars/#{calendar_id}/events\",\"token\":\"mod-1234\",\"expiration\":#{time.to_unix_ms}}", headers: {"Authorization" => "Bearer test_token", "Content-Type" => "application/json", "User-Agent" => "Google on Crystal"})
+        .with(body: "{\"id\":\"1234567\",\"type\":\"web_hook\",\"address\":\"https://mydomain.com/notification\",\"token\":\"mod-1234\",\"expiration\":#{time.to_unix_ms}}", headers: {"Authorization" => "Bearer test_token", "Content-Type" => "application/json", "User-Agent" => "Google on Crystal"})
         .to_return(body: %({
           "kind": "api#channel",
           "id": "1234567",
@@ -104,7 +104,7 @@ describe Google::Calendar do
           "expiration": #{time.to_unix_ms}
         }))
 
-      receipt = CalendarHelper.calendar.watch("1234567", "calendars/#{calendar_id}/events", "mod-1234", time)
+      receipt = CalendarHelper.calendar.watch("1234567", "calendars/#{calendar_id}/events", "https://mydomain.com/notification", "mod-1234", time)
       receipt.is_a?(Google::Calendar::Notification::Receipt).should eq(true)
       receipt.expiration.should eq time.to_unix_ms
     end

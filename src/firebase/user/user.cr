@@ -41,7 +41,7 @@ module Google
       @[JSON::Field(key: "validSince", converter: Google::EpochConverter)]
       getter valid_since : Time
 
-      getter disabled : Bool
+      getter disabled : Bool?
 
       @[JSON::Field(key: "lastLoginAt", converter: Google::EpochMillisConverter)]
       getter last_login_at : Time?

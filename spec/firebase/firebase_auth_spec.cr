@@ -54,6 +54,14 @@ describe Google::FirebaseAuth do
       received = FirebaseAuthHelper.firebase.query([{"email" => "test-user@example.com"}])
       received.should eq(expected)
     end
+
+    it "converts snake case to camel case" do
+      FirebaseAuthHelper.mock_token
+      FirebaseAuthHelper.mock_query_user_info_false
+
+      received = FirebaseAuthHelper.firebase.query([{"phone_number" => "04"}], return_user_info: false)
+      received.records_count.should eq(1)
+    end
   end
 
   describe "#update" do
@@ -154,6 +162,12 @@ module FirebaseAuthHelper
   def mock_query
     WebMock.stub(:post, "https://identitytoolkit.googleapis.com/v1/projects/spec-project-id/accounts:query")
       .to_return(body: query_response.to_json)
+  end
+
+  def mock_query_user_info_false
+    WebMock.stub(:post, "https://identitytoolkit.googleapis.com/v1/projects/spec-project-id/accounts:query")
+      .with(body: "{\"returnUserInfo\":false,\"expression\":[{\"phoneNumber\":\"04\"}]}")
+      .to_return(body: {"recordsCount": "1"}.to_json)
   end
 
   def update_response

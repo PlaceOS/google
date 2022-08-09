@@ -38,6 +38,7 @@ module Google
       opts = opts.merge({email: email}) if email
       opts = opts.merge({password: password}) if password
       opts = opts.merge({displayName: display_name}) if display_name
+      opts = transform_options(opts) if opts
 
       HTTP::Request.new("POST", "/v1/accounts:signUp", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -63,6 +64,7 @@ module Google
       opts = opts.merge({
         maxResults: limit,
       })
+      opts = transform_options(opts) if opts
       options = opts.map { |key, value| "#{key}=#{value}" }.join("&")
 
       HTTP::Request.new("GET", "/v1/projects/#{@project_id}/accounts:batchGet?#{options}", HTTP::Headers{
@@ -85,6 +87,7 @@ module Google
       opts = opts.merge({
         localId: local_id,
       })
+      opts = transform_options(opts) if opts
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:delete", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -104,6 +107,7 @@ module Google
     # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/projects.accounts/lookup
     def lookup_request(local_id : Array(String)? = nil, **opts)
       opts = opts.merge({localId: local_id}) if local_id
+      # opts = transform_options(opts) if opts
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:lookup", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -125,6 +129,7 @@ module Google
       opts = opts.merge({
         expression: expression,
       })
+      opts = transform_options(opts) if opts
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:query", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -150,6 +155,7 @@ module Google
       opts = opts.merge({email: email}) if email
       opts = opts.merge({password: password}) if password
       opts = opts.merge({disableUser: disable_user}) unless disable_user.nil?
+      opts = transform_options(opts) if opts
 
       HTTP::Request.new("POST", "/v1/projects/#{@project_id}/accounts:update", HTTP::Headers{
         "Authorization" => "Bearer #{get_token}",
@@ -174,6 +180,20 @@ module Google
       ConnectProxy::HTTPClient.new(FIREBASE_AUTH_URI) do |client|
         client.exec(request)
       end
+    end
+
+    private def transform_options(args : NamedTuple | Hash) : Hash
+      hash = args.is_a?(Hash) ? args : args.to_h
+      hash.each.map do |key, value|
+        value = if value.is_a?(NamedTuple) || value.is_a?(Hash)
+                  transform_options(value)
+                elsif value.is_a?(Array)
+                  value.map { |v| v.is_a?(NamedTuple) || v.is_a?(Hash) ? transform_options(v) : v }
+                else
+                  value
+                end
+        {key.to_s.camelcase(lower: true), value}
+      end.to_h
     end
   end
 end

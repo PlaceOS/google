@@ -2,7 +2,8 @@ require "./user"
 
 module Google
   class FirebaseAuth
-    class QueryUserResponse
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/QueryUserInfoResponse
+    struct QueryUserResponse
       include JSON::Serializable
 
       @[JSON::Field(key: "recordsCount", converter: Google::StringTypeConverter(Int64))]

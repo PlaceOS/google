@@ -2,7 +2,8 @@ require "./user"
 
 module Google
   class FirebaseAuth
-    class BatchUserResponse
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/DownloadAccountResponse
+    struct BatchUserResponse
       include JSON::Serializable
 
       getter kind : String?

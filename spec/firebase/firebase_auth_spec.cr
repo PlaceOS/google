@@ -1,13 +1,24 @@
 require "../spec_helper"
 
 describe Google::FirebaseAuth do
+  describe "#sign_up" do
+    it "works in case of successful api call" do
+      FirebaseAuthHelper.mock_token
+      FirebaseAuthHelper.mock_sign_up
+
+      expected = Google::FirebaseAuth::SignUpUserResponse.from_json(FirebaseAuthHelper.sign_up_response.to_json)
+      received = FirebaseAuthHelper.firebase.sign_up(email: "test-user@example.com")
+      received.should eq(expected)
+    end
+  end
+
   describe "#users" do
     it "works in case of successful api call" do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_users
 
-      expected = Google::FirebaseAuth::BatchUserResponse.from_json(FirebaseAuthHelper.users_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.users.to_json
+      expected = Google::FirebaseAuth::BatchUserResponse.from_json(FirebaseAuthHelper.users_response.to_json)
+      received = FirebaseAuthHelper.firebase.users
       received.should eq(expected)
     end
   end
@@ -17,8 +28,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_delete
 
-      expected = Google::FirebaseAuth::DeleteUserResponse.from_json(FirebaseAuthHelper.delete_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.delete("local-id").to_json
+      expected = Google::FirebaseAuth::DeleteUserResponse.from_json(FirebaseAuthHelper.delete_response.to_json)
+      received = FirebaseAuthHelper.firebase.delete("local-id")
       received.should eq(expected)
     end
   end
@@ -28,8 +39,8 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_lookup
 
-      expected = Google::FirebaseAuth::LookupUserResponse.from_json(FirebaseAuthHelper.lookup_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.lookup(["local-id"]).to_json
+      expected = Google::FirebaseAuth::LookupUserResponse.from_json(FirebaseAuthHelper.lookup_response.to_json)
+      received = FirebaseAuthHelper.firebase.lookup(["local-id"])
       received.should eq(expected)
     end
   end
@@ -39,8 +50,27 @@ describe Google::FirebaseAuth do
       FirebaseAuthHelper.mock_token
       FirebaseAuthHelper.mock_query
 
-      expected = Google::FirebaseAuth::QueryUserResponse.from_json(FirebaseAuthHelper.query_response.to_json).to_json
-      received = FirebaseAuthHelper.firebase.query([{"email" => "test-user@example.com"}]).to_json
+      expected = Google::FirebaseAuth::QueryUserResponse.from_json(FirebaseAuthHelper.query_response.to_json)
+      received = FirebaseAuthHelper.firebase.query([{"email" => "test-user@example.com"}])
+      received.should eq(expected)
+    end
+
+    it "converts snake case to camel case" do
+      FirebaseAuthHelper.mock_token
+      FirebaseAuthHelper.mock_query_user_info_false
+
+      received = FirebaseAuthHelper.firebase.query([{"phone_number" => "04"}], return_user_info: false)
+      received.records_count.should eq(1)
+    end
+  end
+
+  describe "#update" do
+    it "works in case of successful api call" do
+      FirebaseAuthHelper.mock_token
+      FirebaseAuthHelper.mock_update
+
+      expected = Google::FirebaseAuth::UpdateUserResponse.from_json(FirebaseAuthHelper.update_response.to_json)
+      received = FirebaseAuthHelper.firebase.update("asdfghjklzxcvbnm", display_name: "Test User")
       received.should eq(expected)
     end
   end
@@ -58,6 +88,18 @@ module FirebaseAuthHelper
     Google::FirebaseAuth.new(auth: auth, project_id: "spec-project-id")
   end
 
+  def sign_up_response
+    {
+      "email":   "test-user@example.com",
+      "localId": "asdfghjklzxcvbnm",
+    }
+  end
+
+  def mock_sign_up
+    WebMock.stub(:post, "https://identitytoolkit.googleapis.com/v1/accounts:signUp")
+      .to_return(body: sign_up_response.to_json)
+  end
+
   def users_response
     {
       "users": [user_info],
@@ -71,6 +113,7 @@ module FirebaseAuthHelper
 
   def user_info
     {
+      "localId":          "asdfghjklzxcvbnm",
       "email":            "test-user@example.com",
       "displayName":      "Test User",
       "emailVerified":    false,
@@ -84,6 +127,7 @@ module FirebaseAuthHelper
         },
       ],
       "validSince":    "1653541473",
+      "disabled":      false,
       "lastLoginAt":   "1653541473015",
       "createdAt":     "1653541473014",
       "lastRefreshAt": "2022-05-26T05:04:33.015Z",
@@ -118,6 +162,25 @@ module FirebaseAuthHelper
   def mock_query
     WebMock.stub(:post, "https://identitytoolkit.googleapis.com/v1/projects/spec-project-id/accounts:query")
       .to_return(body: query_response.to_json)
+  end
+
+  def mock_query_user_info_false
+    WebMock.stub(:post, "https://identitytoolkit.googleapis.com/v1/projects/spec-project-id/accounts:query")
+      .with(body: "{\"returnUserInfo\":false,\"expression\":[{\"phoneNumber\":\"04\"}]}")
+      .to_return(body: {"recordsCount": "1"}.to_json)
+  end
+
+  def update_response
+    {
+      "localId":     "asdfghjklzxcvbnm",
+      "email":       "test-user@example.com",
+      "displayName": "Test User",
+    }
+  end
+
+  def mock_update
+    WebMock.stub(:post, "https://identitytoolkit.googleapis.com/v1/projects/spec-project-id/accounts:update")
+      .to_return(body: update_response.to_json)
   end
 
   def auth

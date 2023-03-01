@@ -2,7 +2,8 @@ require "./user"
 
 module Google
   class FirebaseAuth
-    class LookupUserResponse
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/GetAccountInfoResponse
+    struct LookupUserResponse
       include JSON::Serializable
 
       getter kind : String?

@@ -1,6 +1,7 @@
 module Google
   class FirebaseAuth
-    class ProviderUserInfo
+    # API details: https://cloud.google.com/identity-platform/docs/reference/rest/v1/ProviderUserInfo
+    struct ProviderUserInfo
       include JSON::Serializable
 
       @[JSON::Field(key: "providerId")]
@@ -15,7 +16,7 @@ module Google
       @[JSON::Field(key: "federatedId")]
       getter federated_id : String
 
-      getter email : String
+      getter email : String?
 
       @[JSON::Field(key: "rawId")]
       getter raw_id : String

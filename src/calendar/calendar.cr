@@ -315,6 +315,14 @@ module Google
     end
 
     def decline(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All, comment : String? = nil)
+      respond("declined", event_id, calendar_id, notify, comment)
+    end
+
+    def accept(event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All, comment : String? = nil)
+      respond("accepted", event_id, calendar_id, notify, comment)
+    end
+
+    def respond(status : String, event_id, calendar_id = "primary", notify : UpdateGuests = UpdateGuests::All, comment : String? = nil)
       event = event(event_id, calendar_id)
       return true unless event
 
@@ -335,7 +343,7 @@ module Google
 
       return false if index == -1
 
-      attendees[index].response_status = "declined"
+      attendees[index].response_status = status
       attendees[index].comment = comment
       update_request(event_id, calendar_id, attendees: attendees, notify: notify)
       true
